@@ -72,16 +72,19 @@ class RectifierSolver:
         squared_current = current_values**2
         self.Irms = np.sqrt(np.trapz(squared_current, t_values) / (2*np.pi))
         
-        # Step 6: Calculate Average Voltage (Vavg)
-        voltage_values = np.zeros(3*num_points)
+        # Step 6: Calculate Average Voltage (Vavg) - CORRECTED:
+        # For RLE case: Vdc from 0 to alpha, Vsource from alpha to beta, Vdc from beta to 2π
+        num_points = 1000
+        
+        # Define the three regions and their voltage functions
         t1 = np.linspace(0, self.alpha, num_points)
-        v1 = np.zeros_like(t1)
+        v1 = np.full_like(t1, self.Vdc)  # Vdc in region 1
         
         t2 = np.linspace(self.alpha, self.beta, num_points)
-        v2 = self.Vm * np.sin(t2)
+        v2 = self.Vm * np.sin(t2)  # Vsource in region 2
         
         t3 = np.linspace(self.beta, 2*np.pi, num_points)
-        v3 = np.zeros_like(t3)
+        v3 = np.full_like(t3, self.Vdc)  # Vdc in region 3
         
         t_all = np.concatenate([t1, t2, t3])
         v_all = np.concatenate([v1, v2, v3])
@@ -102,40 +105,50 @@ class RectifierSolver:
         
         return self.generate_results()
     
-    def current_function(self, t):
-        """Calculate the current at time t"""
-        return (self.Vm/self.Z) * np.sin(t - self.theta) - self.Vdc/self.R + self.A * np.exp(-t/self.wTau)
+    def current_function(self, wt):
+        """Calculate the current at angular position wt"""
+        return (self.Vm/self.Z) * np.sin(wt - self.theta) - self.Vdc/self.R + self.A * np.exp(-wt/self.wTau)
     
     def generate_waveforms(self):
-        """Generate waveform data for visualization"""
-        t = np.linspace(0, 2*np.pi, 1000)
+        """Generate waveform data for visualization
+        All waveforms are functions of angular position (wt)"""
+        wt = np.linspace(0, 2*np.pi, 1000)  # Angular position from 0 to 2π
         
         # Source voltage
-        vs = self.Vm * np.sin(t)
+        vs = self.Vm * np.sin(wt)
         
-        # Output voltage (0 before alpha and after beta, vs during conduction)
-        vo = np.zeros_like(t)
-        conduction_mask = (t >= self.alpha) & (t <= self.beta)
-        vo[conduction_mask] = vs[conduction_mask]
+        # Output voltage for RLE: 
+        # - Vdc from 0 to alpha
+        # - Vsource from alpha to beta
+        # - Vdc from beta to 2π
+        vo = np.zeros_like(wt)
+        non_conducting_before = (wt < self.alpha)
+        conducting = (wt >= self.alpha) & (wt <= self.beta)
+        non_conducting_after = (wt > self.beta)
         
-        # Diode voltage
-        vd = np.zeros_like(t)
-        non_conduction_mask = ~conduction_mask
-        vd[non_conduction_mask] = vs[non_conduction_mask]
+        vo[non_conducting_before] = self.Vdc
+        vo[conducting] = vs[conducting]
+        vo[non_conducting_after] = self.Vdc
+        
+        # Diode voltage (Vsource - Voutput)
+        vd = vs - vo
         
         # Current (0 before alpha and after beta)
-        i_out = np.zeros_like(t)
-        i_out[conduction_mask] = self.current_function(t[conduction_mask])
+        i_out = np.zeros_like(wt)
+        i_out[conducting] = self.current_function(wt[conducting])
         
-        # Inductor voltage
-        vl = np.zeros_like(t)
-        vl[conduction_mask] = self.L * np.gradient(i_out[conduction_mask], t[conduction_mask])
+        # Inductor voltage (L * di/dt)
+        vl = np.zeros_like(wt)
+        # Use np.gradient to calculate di/dt, adjust for actual time by multiplying by angular frequency
+        if np.any(conducting):
+            di_dt = np.gradient(i_out[conducting], wt[conducting])
+            vl[conducting] = self.L * di_dt * self.w
         
-        # Resistor voltage
+        # Resistor voltage (I*R)
         vr = i_out * self.R
         
         return {
-            'time': t.tolist(),
+            'time': wt.tolist(),
             'vs': vs.tolist(),
             'vo': vo.tolist(),
             'vd': vd.tolist(),
