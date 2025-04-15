@@ -12,11 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('no-results').classList.add('d-none');
         
         // Collect form data
+        const Vrms = parseFloat(document.getElementById('Vrms').value);
+        // Convert RMS to peak (Vm = Vrms * sqrt(2))
+        const Vm = Vrms * Math.sqrt(2);
+        
         const formData = {
             circuit_type: document.querySelector('input[name="circuit_type"]:checked').value,
             control_type: document.querySelector('input[name="control_type"]:checked').value,
             wave_type: document.querySelector('input[name="wave_type"]:checked').value,
-            Vm: parseFloat(document.getElementById('Vm').value),
+            Vm: Vm, // Send peak voltage to backend
             f: parseFloat(document.getElementById('f').value),
             R: parseFloat(document.getElementById('R').value),
             L: parseFloat(document.getElementById('L').value),

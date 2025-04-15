@@ -55,9 +55,9 @@
                             <h5>Circuit Parameters</h5>
                             
                             <div class="mb-3">
-                                <label for="Vm" class="form-label">Source Voltage Peak (Vm)</label>
+                                <label for="Vrms" class="form-label">Source Voltage RMS (Vrms)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="Vm" name="Vm" value="100" required>
+                                    <input type="number" class="form-control" id="Vrms" name="Vrms" value="70.7" step="0.1" required>
                                     <span class="input-group-text">V</span>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                             <div class="mb-3">
                                 <label for="f" class="form-label">Frequency</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="f" name="f" value="50" required>
+                                    <input type="number" class="form-control" id="f" name="f" value="50" step="0.1" required>
                                     <span class="input-group-text">Hz</span>
                                 </div>
                             </div>
@@ -73,7 +73,7 @@
                             <div class="mb-3">
                                 <label for="R" class="form-label">Resistance (R)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="R" name="R" value="10" required>
+                                    <input type="number" class="form-control" id="R" name="R" value="10" step="0.01" required>
                                     <span class="input-group-text">Ω</span>
                                 </div>
                             </div>
@@ -81,7 +81,7 @@
                             <div class="mb-3">
                                 <label for="L" class="form-label">Inductance (L)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="L" name="L" value="0.01" step="0.001" required>
+                                    <input type="number" class="form-control" id="L" name="L" value="0.01" step="0.0001" required>
                                     <span class="input-group-text">H</span>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@
                             <div class="mb-3">
                                 <label for="Vdc" class="form-label">DC Voltage (Vdc)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="Vdc" name="Vdc" value="20" required>
+                                    <input type="number" class="form-control" id="Vdc" name="Vdc" value="20" step="0.1" required>
                                     <span class="input-group-text">V</span>
                                 </div>
                             </div>
