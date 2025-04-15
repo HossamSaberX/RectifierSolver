@@ -56,9 +56,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function displayResults(data) {
-    // Display calculated parameters
-    document.getElementById('alpha-value').textContent = data.parameters.alpha.toFixed(2);
-    document.getElementById('beta-value').textContent = data.parameters.beta.toFixed(2);
+    // Display calculated parameters in radians (not converting to degrees)
+    document.getElementById('alpha-value').textContent = data.parameters.alpha.toFixed(4);
+    document.getElementById('beta-value').textContent = data.parameters.beta.toFixed(4);
     document.getElementById('A-value').textContent = data.parameters.A.toFixed(4);
     
     // Display performance metrics
@@ -76,9 +76,60 @@ function displayResults(data) {
 }
 
 function plotWaveforms(waveforms) {
-    // Convert angles from radians to degrees for better readability
-    const angleConversion = 180 / Math.PI;
-    const time = waveforms.time.map(t => t * angleConversion);
+    // Keep time in radians - no conversion needed
+    const time = waveforms.time;
+    
+    // Create shapes array for pi and 2pi markings
+    const piMarkers = [
+        // π line
+        {
+            type: 'line',
+            x0: Math.PI,
+            y0: -1.5, // Extended below to make it visible
+            x1: Math.PI,
+            y1: 1.5,  // Extended above to make it visible
+            line: {
+                color: 'rgba(200, 0, 0, 0.5)',
+                width: 1,
+                dash: 'dash'
+            }
+        },
+        // 2π line
+        {
+            type: 'line',
+            x0: 2 * Math.PI,
+            y0: -1.5,
+            x1: 2 * Math.PI,
+            y1: 1.5,
+            line: {
+                color: 'rgba(200, 0, 0, 0.5)',
+                width: 1,
+                dash: 'dash'
+            }
+        }
+    ];
+    
+    // π annotation
+    const piAnnotations = [
+        {
+            x: Math.PI,
+            y: 1.3,
+            text: 'π',
+            showarrow: false,
+            font: {
+                size: 16
+            }
+        },
+        {
+            x: 2 * Math.PI,
+            y: 1.3,
+            text: '2π',
+            showarrow: false,
+            font: {
+                size: 16
+            }
+        }
+    ];
     
     // Source voltage plot
     const vsTrace = {
@@ -93,16 +144,20 @@ function plotWaveforms(waveforms) {
     };
     
     const vsLayout = {
-        title: 'Source Voltage vs. Angle',
+        title: 'Source Voltage vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Voltage (V)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('vs-chart', [vsTrace], vsLayout);
@@ -120,16 +175,20 @@ function plotWaveforms(waveforms) {
     };
     
     const voLayout = {
-        title: 'Output Voltage vs. Angle',
+        title: 'Output Voltage vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Voltage (V)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('vo-chart', [voTrace], voLayout);
@@ -147,16 +206,20 @@ function plotWaveforms(waveforms) {
     };
     
     const vdLayout = {
-        title: 'Diode Voltage vs. Angle',
+        title: 'Diode Voltage vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Voltage (V)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('vd-chart', [vdTrace], vdLayout);
@@ -174,16 +237,20 @@ function plotWaveforms(waveforms) {
     };
     
     const iLayout = {
-        title: 'Output Current vs. Angle',
+        title: 'Output Current vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Current (A)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('i-chart', [iTrace], iLayout);
@@ -201,16 +268,20 @@ function plotWaveforms(waveforms) {
     };
     
     const vlLayout = {
-        title: 'Inductor Voltage vs. Angle',
+        title: 'Inductor Voltage vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Voltage (V)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('vl-chart', [vlTrace], vlLayout);
@@ -228,16 +299,20 @@ function plotWaveforms(waveforms) {
     };
     
     const vrLayout = {
-        title: 'Resistor Voltage vs. Angle',
+        title: 'Resistor Voltage vs. Angular Position (ωt)',
         xaxis: {
-            title: 'Angle (degrees)',
-            range: [0, 360]
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
         },
         yaxis: {
             title: 'Voltage (V)'
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
     };
     
     Plotly.newPlot('vr-chart', [vrTrace], vrLayout);

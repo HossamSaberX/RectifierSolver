@@ -163,8 +163,8 @@ class RectifierSolver:
         
         return {
             'parameters': {
-                'alpha': self.alpha * 180/np.pi,  # Convert to degrees
-                'beta': self.beta * 180/np.pi,    # Convert to degrees
+                'alpha': self.alpha,  # Keep in radians
+                'beta': self.beta,    # Keep in radians
                 'A': self.A
             },
             'performance': {
