@@ -56,12 +56,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function displayResults(data) {
-    // Display calculated parameters in radians (not converting to degrees)
+    // Display calculated parameters in radians
     document.getElementById('alpha-value').textContent = data.parameters.alpha.toFixed(4);
     document.getElementById('beta-value').textContent = data.parameters.beta.toFixed(4);
+    document.getElementById('conducting-angle-value').textContent = data.parameters.conducting_angle.toFixed(4);
+    document.getElementById('conducting-time-value').textContent = data.parameters.conducting_time.toFixed(2);
     document.getElementById('A-value').textContent = data.parameters.A.toFixed(4);
     
     // Display performance metrics
+    document.getElementById('power-value').textContent = data.performance.power.toFixed(4);
     document.getElementById('Iavg-value').textContent = data.performance.Iavg.toFixed(4);
     document.getElementById('Irms-value').textContent = data.performance.Irms.toFixed(4);
     document.getElementById('Vavg-value').textContent = data.performance.Vavg.toFixed(4);

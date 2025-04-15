@@ -40,6 +40,9 @@ class RectifierSolver:
         self.form_factor = 0
         self.ripple_factor = 0
         self.efficiency = 0
+        self.power = 0  # Power on load
+        self.conducting_angle = 0  # Conducting angle in radians
+        self.conducting_time = 0  # Conducting time in ms
         
     def solve_uncontrolled_half_wave(self):
         # Step 1: Find alpha
@@ -61,6 +64,11 @@ class RectifierSolver:
         self.beta = fsolve(equation_for_beta, beta_initial)[0]
         if self.beta < self.alpha:
             self.beta += 2*np.pi  # Ensure beta > alpha
+        
+        # Calculate conducting angle and time
+        self.conducting_angle = self.beta - self.alpha
+        # Convert from angular position to time in ms
+        self.conducting_time = 1000 * self.conducting_angle / self.w  # ms
         
         # Step 4: Calculate Average Current (Iavg)
         num_points = 1000
@@ -95,13 +103,29 @@ class RectifierSolver:
         self.Vrms = np.sqrt(np.trapz(v_all**2, t_all) / (2*np.pi))
         
         # Step 8: Calculate Performance Metrics
-        input_power = self.Vm * self.Irms / np.sqrt(2)
-        output_power = self.Vdc * self.Iavg + self.Irms**2 * self.R
+        # Source RMS values
+        Vs_rms = self.Vm / np.sqrt(2)
         
-        self.power_factor = output_power / input_power if input_power > 0 else 0
-        self.form_factor = self.Irms / self.Iavg if self.Iavg > 0 else 0
+        # Calculate power on load: VdcIavg + Irms²×R
+        self.power = self.Vdc * self.Iavg + self.Irms**2 * self.R
+        
+        # DC power - corrected to use Vavg*Iavg
+        Pdc = self.Vavg * self.Iavg
+        
+        # RMS power
+        Prms = self.Vrms * self.Irms
+        
+        # Power factor is Power/Vs_rms*Is_rms
+        self.power_factor = self.power / (Vs_rms * self.Irms) if (Vs_rms * self.Irms) > 0 else 0
+        
+        # Form factor is Vrms/Vavg - corrected
+        self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
+        
+        # Ripple factor = sqrt((Vrms/Vavg)^2 - 1)
         self.ripple_factor = np.sqrt((self.Vrms / self.Vavg)**2 - 1) if self.Vavg > 0 else 0
-        self.efficiency = self.Vdc * self.Iavg / output_power if output_power > 0 else 0
+        
+        # Efficiency is Pdc/Prms - corrected
+        self.efficiency = Pdc / Prms if Prms > 0 else 0
         
         return self.generate_results()
     
@@ -165,7 +189,9 @@ class RectifierSolver:
             'parameters': {
                 'alpha': self.alpha,  # Keep in radians
                 'beta': self.beta,    # Keep in radians
-                'A': self.A
+                'A': self.A,
+                'conducting_angle': self.conducting_angle,
+                'conducting_time': self.conducting_time
             },
             'performance': {
                 'Iavg': self.Iavg,
@@ -175,7 +201,8 @@ class RectifierSolver:
                 'power_factor': self.power_factor,
                 'form_factor': self.form_factor,
                 'ripple_factor': self.ripple_factor,
-                'efficiency': self.efficiency
+                'efficiency': self.efficiency,
+                'power': self.power
             },
             'waveforms': waveforms
         }
