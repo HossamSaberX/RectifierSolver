@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
-import numpy as np
-# Import directly from app.solvers package instead of individual modules
 from app.solvers import UncontrolledHalfWaveSolver, ControlledHalfWaveSolver
 
 # Initialize Flask app with the correct template folder
