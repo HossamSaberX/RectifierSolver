@@ -12,8 +12,12 @@ class ControlledHalfWaveSolver(BaseRectifierSolver):
         
     def solve(self):
         """Implement the solution for controlled half-wave rectifier"""
-        # Step 1: Alpha is specified by the firing circuit
-        self.alpha = self.specified_alpha
+        # Calculate the minimum possible firing angle (alphamin)
+        alpha_min = np.arcsin(min(1.0, self.Vdc/self.Vm))  # Clip to valid range
+        alpha_min = max(0, alpha_min)
+        
+        # Step 1: Alpha is specified by the firing circuit, but must be >= alpha_min to operate
+        self.alpha = max(self.specified_alpha, alpha_min)
         
         # Step 2: Find A by setting i(alpha) = 0
         def equation_for_A(A):
@@ -36,15 +40,61 @@ class ControlledHalfWaveSolver(BaseRectifierSolver):
         # Convert from angular position to time in ms
         self.conducting_time = 1000 * self.conducting_angle / self.w  # ms
         
-        # NOTE: The remaining calculations follow the same pattern as the uncontrolled case
-        # This is a placeholder implementation - you'll want to update with the specific
-        # equations for controlled rectifiers if they differ
-
-        # TODO: Implement the rest of the calculations for controlled half-wave rectifier
-        # For now, we'll use a simplified approach by reusing the uncontrolled logic
+        # Step 4: Calculate Average Current (Iavg)
+        num_points = 1000
+        t_values = np.linspace(self.alpha, self.beta, num_points)
+        current_values = self.current_function(t_values)
+        self.Iavg = np.trapz(current_values, t_values) / (2*np.pi)
         
-        # Step 4-8: Calculate remaining parameters as in the uncontrolled case
-        # For a proper implementation, you may need to adjust these calculations
+        # Step 5: Calculate RMS Current (Irms)
+        squared_current = current_values**2
+        self.Irms = np.sqrt(np.trapz(squared_current, t_values) / (2*np.pi))
+        
+        # Step 6: Calculate Average Voltage (Vavg)
+        num_points = 1000
+        
+        # Define the three regions and their voltage functions
+        t1 = np.linspace(0, self.alpha, num_points)
+        v1 = np.full_like(t1, self.Vdc)  # Vdc in region 1
+        
+        t2 = np.linspace(self.alpha, self.beta, num_points)
+        v2 = self.Vm * np.sin(t2)  # Vsource in region 2
+        
+        t3 = np.linspace(self.beta, 2*np.pi, num_points)
+        v3 = np.full_like(t3, self.Vdc)  # Vdc in region 3
+        
+        t_all = np.concatenate([t1, t2, t3])
+        v_all = np.concatenate([v1, v2, v3])
+        
+        self.Vavg = np.trapz(v_all, t_all) / (2*np.pi)
+        
+        # Step 7: Calculate RMS Voltage (Vrms)
+        self.Vrms = np.sqrt(np.trapz(v_all**2, t_all) / (2*np.pi))
+        
+        # Step 8: Calculate Performance Metrics
+        # Source RMS values
+        Vs_rms = self.Vm / np.sqrt(2)
+        
+        # Calculate power on load: VdcIavg + Irms²×R
+        self.power = self.Vdc * self.Iavg + self.Irms**2 * self.R
+        
+        # DC power - use Vavg*Iavg
+        Pdc = self.Vavg * self.Iavg
+        
+        # RMS power
+        Prms = self.Vrms * self.Irms
+        
+        # Power factor is Power/Vs_rms*Is_rms
+        self.power_factor = self.power / (Vs_rms * self.Irms) if (Vs_rms * self.Irms) > 0 else 0
+        
+        # Form factor is Vrms/Vavg
+        self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
+        
+        # Ripple factor = sqrt((Vrms/Vavg)^2 - 1)
+        self.ripple_factor = np.sqrt((self.Vrms / self.Vavg)**2 - 1) if self.Vavg > 0 else 0
+        
+        # Efficiency is Pdc/Prms
+        self.efficiency = Pdc / Prms if Prms > 0 else 0
         
         return self.generate_results()
     

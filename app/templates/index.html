@@ -28,9 +28,19 @@
                                     <label class="form-check-label" for="uncontrolled">Uncontrolled</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="control_type" id="controlled" value="controlled" disabled>
-                                    <label class="form-check-label" for="controlled">Controlled (Coming soon)</label>
+                                    <input class="form-check-input" type="radio" name="control_type" id="controlled" value="controlled">
+                                    <label class="form-check-label" for="controlled">Controlled</label>
                                 </div>
+                            </div>
+
+                            <!-- Firing Angle input - visible only when controlled is selected -->
+                            <div class="mb-3" id="firing-angle-container" style="display: none;">
+                                <label for="firing_angle" class="form-label">Firing Angle (α)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="firing_angle" name="firing_angle" value="0.5" step="0.01" min="0" max="3.14159" required>
+                                    <span class="input-group-text">rad</span>
+                                </div>
+                                <small class="text-muted">Must be ≥ minimum firing angle (arcsin(Vdc/Vm))</small>
                             </div>
 
                             <div class="mb-3">

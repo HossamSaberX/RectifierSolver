@@ -13,6 +13,9 @@ export function getFormulaContent(formulaType) {
     const p = circuitParams;
     const r = circuitResults;
     
+    // Determine if this is a controlled rectifier
+    const isControlled = document.getElementById('controlled').checked;
+    
     // Define the formula explanations
     const formulas = {
         'alpha': `
@@ -23,7 +26,13 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$\\alpha = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p>
+                        ${isControlled ? 
+                            `<p>For controlled rectifiers, α is specified by the firing circuit, but must be greater than or equal to the minimum angle:</p>
+                            <p>$$\\alpha = \\max(\\alpha_{specified}, \\alpha_{min})$$</p>
+                            <p>Where: $$\\alpha_{min} = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p>` 
+                            : 
+                            `<p>$$\\alpha = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p>`
+                        }
                     </div>
                     
                     <div class="mb-3">
@@ -31,16 +40,26 @@ export function getFormulaContent(formulaType) {
                         <ul>
                             <li>$V_{dc} = ${p.Vdc}$ V</li>
                             <li>$V_m = ${p.Vm.toFixed(2)}$ V</li>
+                            ${isControlled ? `<li>$\\alpha_{specified} = ${document.getElementById('firing_angle').value}$ rad</li>` : ''}
                         </ul>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$\\alpha = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${r.parameters.alpha.toFixed(4)}$$ rad</p>
+                        ${isControlled ? 
+                            `<p>$$\\alpha_{min} = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)}$$ rad</p>
+                            <p>$$\\alpha = \\max(${document.getElementById('firing_angle').value}, ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)}) = ${r.parameters.alpha.toFixed(4)}$$ rad</p>` 
+                            :
+                            `<p>$$\\alpha = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${r.parameters.alpha.toFixed(4)}$$ rad</p>`
+                        }
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The diode begins to conduct when the source voltage exceeds the DC voltage.</p>
+                        <p>${isControlled ? 
+                            'In controlled rectifiers, the firing angle is controlled by the firing circuit, but must be at least the minimum angle required for the diode to conduct.' 
+                            : 
+                            'The diode begins to conduct when the source voltage exceeds the DC voltage.'
+                        }</p>
                     </div>
                 </div>
             </div>

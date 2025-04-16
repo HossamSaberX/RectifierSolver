@@ -25,6 +25,31 @@ export function setupFormHandlers() {
         // Collect and submit form data
         submitFormData();
     });
+
+    // Set up control type change handler
+    setupControlTypeChangeHandler();
+}
+
+/**
+ * Set up handler for control type change to toggle firing angle input
+ */
+function setupControlTypeChangeHandler() {
+    const controlRadios = document.querySelectorAll('input[name="control_type"]');
+    const firingAngleContainer = document.getElementById('firing-angle-container');
+    
+    // Update firing angle visibility based on selected control type
+    function updateFiringAngleVisibility() {
+        const isControlled = document.getElementById('controlled').checked;
+        firingAngleContainer.style.display = isControlled ? 'block' : 'none';
+    }
+    
+    // Add change listener to all control type radio buttons
+    controlRadios.forEach(radio => {
+        radio.addEventListener('change', updateFiringAngleVisibility);
+    });
+    
+    // Set initial state
+    updateFiringAngleVisibility();
 }
 
 /**

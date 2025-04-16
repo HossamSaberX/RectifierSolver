@@ -54,4 +54,10 @@ The entire Vo is applied to the whole R, L, Vdc branch
 - VR
 
 ## 2. Controlled RLE
-(Section noted but no details provided)
+the only additional input is delay / firing angle is called alpha 
+>> checking the firing angle vs alphamin:
+alphamin is arcsin vdc/vm
+Given alpha must be bigger than alphamin to opreate
+unless, all zero
+continue normally with exactly the same thing as
+uncontrolled . The given firing angle is the alpha to work with.
