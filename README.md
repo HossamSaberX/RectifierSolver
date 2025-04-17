@@ -70,7 +70,8 @@ python app.py
 
 ## Contributing
 
-Contributions are welcoemd and neede to expand the capabilities of RectifierSolver! The project particularly needs:
+Contributions are welcomed and needed to expand the capabilities of RectifierSolver! 
+The project particularly needs:
 
 ### High Priority Additions
 1. **Full Wave Rectifier Implementations**:
