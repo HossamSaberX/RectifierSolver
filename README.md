@@ -53,7 +53,7 @@ Users can input circuit parameters and instantly see calculated results and wave
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YourUsername/RectifierSolver.git
+git clone https://github.com/HossamSaberX/RectifierSolver.git
 ```
 
 2. Install required dependencies:
@@ -63,10 +63,8 @@ pip install -r requirements.txt
 
 3. Run the application:
 ```bash
-python app.py
+python main.py
 ```
-
-## Deployment
 
 ## Contributing
 
