@@ -121,7 +121,7 @@ class BaseRectifierSolver:
         self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
         
         # Ripple factor = sqrt((Vrms/Vavg)^2 - 1)
-        self.ripple_factor = np.sqrt((self.Vrms / self.Vavg)**2 - 1) if self.Vavg > 0 else 0
+        self.ripple_factor = np.sqrt(self.form_factor**2 - 1) if self.Vavg > 0 else 0
         
         # Efficiency is Pdc/Prms
         self.efficiency = Pdc / Prms if Prms > 0 else 0

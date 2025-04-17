@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
-from app.solvers import UncontrolledHalfWaveSolver, ControlledHalfWaveSolver
+from app.solvers import UncontrolledHalfWaveSolver, ControlledHalfWaveSolver, FreewheelingHalfWaveSolver
 
 # Initialize Flask app with the correct template folder
 app = Flask(__name__, 
@@ -38,7 +38,10 @@ def solve():
     solver = None
     
     if wave_type == 'half':
-        if control_type == 'uncontrolled':
+        if circuit_type == 'fwd' and control_type == 'uncontrolled':
+            # FWD configuration only works with uncontrolled half-wave
+            solver = FreewheelingHalfWaveSolver(circuit_type, Vm, f, R, L)
+        elif control_type == 'uncontrolled':
             solver = UncontrolledHalfWaveSolver(circuit_type, Vm, f, R, L, Vdc)
         elif control_type == 'controlled':
             solver = ControlledHalfWaveSolver(circuit_type, Vm, f, R, L, Vdc, firing_angle)

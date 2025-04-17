@@ -65,8 +65,23 @@ export function plotWaveforms(waveforms) {
     // Create all the plots
     plotSourceVoltage(time, waveforms.vs, piMarkers, piAnnotations);
     plotOutputVoltage(time, waveforms.vo, piMarkers, piAnnotations);
-    plotDiodeVoltage(time, waveforms.vd, piMarkers, piAnnotations);
-    plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+    
+    // Check if this is a freewheeling diode circuit (has vd_fw data)
+    if (waveforms.vd_fw) {
+        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw, piMarkers, piAnnotations);
+        
+        // For FWD circuit, also plot source and freewheeling currents 
+        if (waveforms.i_source && waveforms.i_fw) {
+            plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw, piMarkers, piAnnotations);
+        } else {
+            plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+        }
+    } else {
+        // Standard diode voltage plot for non-FWD circuits
+        plotDiodeVoltage(time, waveforms.vd, piMarkers, piAnnotations);
+        plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+    }
+    
     plotInductorVoltage(time, waveforms.vl, piMarkers, piAnnotations);
     plotResistorVoltage(time, waveforms.vr, piMarkers, piAnnotations);
 }
@@ -174,6 +189,124 @@ function plotDiodeVoltage(time, vd, piMarkers, piAnnotations) {
     };
     
     Plotly.newPlot('vd-chart', [vdTrace], vdLayout);
+}
+
+/**
+ * Plot both diode voltages for freewheeling diode circuit
+ */
+function plotDiodeVoltages(time, vd_main, vd_fw, piMarkers, piAnnotations) {
+    const vdMainTrace = {
+        x: time,
+        y: vd_main,
+        mode: 'lines',
+        name: 'Main Diode Voltage',
+        line: {
+            color: 'rgb(44, 160, 44)',
+            width: 2
+        }
+    };
+    
+    const vdFwTrace = {
+        x: time,
+        y: vd_fw,
+        mode: 'lines',
+        name: 'Freewheeling Diode Voltage',
+        line: {
+            color: 'rgb(214, 39, 40)',
+            width: 2,
+            dash: 'dash'
+        }
+    };
+    
+    const vdLayout = {
+        title: 'Diode Voltages vs. Angular Position (ωt)',
+        xaxis: {
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
+        },
+        yaxis: {
+            title: 'Voltage (V)'
+        },
+        margin: { t: 40, r: 30, l: 60, b: 40 },
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations,
+        legend: {
+            x: 0.01,
+            y: 0.99,
+            traceorder: 'normal',
+            bgcolor: 'rgba(255,255,255,0.6)'
+        }
+    };
+    
+    Plotly.newPlot('vd-chart', [vdMainTrace, vdFwTrace], vdLayout);
+}
+
+/**
+ * Plot all currents for freewheeling diode circuit
+ */
+function plotCurrents(time, i_out, i_source, i_fw, piMarkers, piAnnotations) {
+    const iOutTrace = {
+        x: time,
+        y: i_out,
+        mode: 'lines',
+        name: 'Output Current',
+        line: {
+            color: 'rgb(214, 39, 40)',
+            width: 2
+        }
+    };
+    
+    const iSourceTrace = {
+        x: time,
+        y: i_source,
+        mode: 'lines',
+        name: 'Source Current',
+        line: {
+            color: 'rgb(31, 119, 180)',
+            width: 2,
+            dash: 'dash'
+        }
+    };
+    
+    const iFwTrace = {
+        x: time,
+        y: i_fw,
+        mode: 'lines',
+        name: 'Freewheeling Current',
+        line: {
+            color: 'rgb(255, 127, 14)',
+            width: 2,
+            dash: 'dot'
+        }
+    };
+    
+    const iLayout = {
+        title: 'Currents vs. Angular Position (ωt)',
+        xaxis: {
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
+        },
+        yaxis: {
+            title: 'Current (A)'
+        },
+        margin: { t: 40, r: 30, l: 60, b: 40 },
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations,
+        legend: {
+            x: 0.01,
+            y: 0.99,
+            traceorder: 'normal',
+            bgcolor: 'rgba(255,255,255,0.6)'
+        }
+    };
+    
+    Plotly.newPlot('i-chart', [iOutTrace, iSourceTrace, iFwTrace], iLayout);
 }
 
 /**
