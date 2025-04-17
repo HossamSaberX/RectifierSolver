@@ -86,10 +86,9 @@ The project particularly needs:
 
 ### How to Contribute
 1. Fork the repository
-2. Create a new branch for your feature (`git checkout -b feature/your-feature-name`)
+2. Create a new branch for your addition
 3. Implement your changes
-4. Add appropriate tests
-5. Submit a pull request with a clear description of your additions
+4. Submit a pull request with a clear description of your additions
 
 
 ## License
