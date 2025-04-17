@@ -54,10 +54,24 @@ The entire Vo is applied to the whole R, L, Vdc branch
 - VR
 
 ## 2. Controlled RLE
-the only additional input is delay / firing angle is called alpha 
->> checking the firing angle vs alphamin:
-alphamin is arcsin vdc/vm
-Given alpha must be bigger than alphamin to opreate
-unless, all zero
-continue normally with exactly the same thing as
-uncontrolled . The given firing angle is the alpha to work with.
+- **Input**: Firing angle (α)
+- **Condition**: α must be ≥ αmin, where αmin = arcsin(Vdc/Vm)
+- **Operation**: 
+  - If α < αmin: Circuit cannot operate (all zeros)
+  - If α ≥ αmin: Proceed with same analysis as uncontrolled circuit, using the firing angle α as the starting point
+
+Current equation and all other calculations remain identical to uncontrolled circuit.
+
+## 3. RL + FreeWheelingDiode (uncontrolled)
+- **Voltage**:
+- Vo is Vsource at +ve half
+- 0 at -ve half
+- **Current**:
+- i = Vm/z* sin(wt-theta) + Ae^(-wt/wTau) at +ve half cycle
+- i = Be^(-(wt-pi)/wTau)
+- Get A and B by setting i(pi-) = i(pi+)
+- i(0) = i(2pi)
+- Solve for A and B numercially
+- isource is gonne be the +ve half only of the out
+- ifwd(freewheeling) is the -ve half
+- **Remaining Parmaters as the old ones to calc**:
