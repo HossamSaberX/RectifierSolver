@@ -31,6 +31,9 @@ export function setupFormHandlers() {
     
     // Set up circuit type change handler
     setupCircuitTypeChangeHandler();
+    
+    // Update circuit diagram initially
+    updateCircuitDiagram();
 }
 
 /**
@@ -38,6 +41,7 @@ export function setupFormHandlers() {
  */
 function setupCircuitTypeChangeHandler() {
     const circuitRadios = document.querySelectorAll('input[name="circuit_type"]');
+    const controlRadios = document.querySelectorAll('input[name="control_type"]');
     const vdcContainer = document.getElementById('Vdc').closest('.mb-3');
     const controlledOption = document.getElementById('controlled');
     
@@ -57,11 +61,19 @@ function setupCircuitTypeChangeHandler() {
             // Trigger change event to update firing angle visibility
             document.getElementById('uncontrolled').dispatchEvent(new Event('change'));
         }
+        
+        // Update circuit diagram when circuit type changes
+        updateCircuitDiagram();
     }
     
     // Add change listener to all circuit type radio buttons
     circuitRadios.forEach(radio => {
         radio.addEventListener('change', updateCircuitTypeOptions);
+    });
+    
+    // Add change listener to control type radio buttons to update diagram
+    controlRadios.forEach(radio => {
+        radio.addEventListener('change', updateCircuitDiagram);
     });
     
     // Set initial state
@@ -88,6 +100,35 @@ function setupControlTypeChangeHandler() {
     
     // Set initial state
     updateFiringAngleVisibility();
+}
+
+/**
+ * Update the circuit diagram based on selected circuit type and control type
+ */
+function updateCircuitDiagram() {
+    const circuitDiagram = document.getElementById('circuit-diagram');
+    const isControlled = document.getElementById('controlled').checked;
+    const isFwd = document.getElementById('fwd-config').checked;
+    
+    // Set the appropriate image based on the selected options
+    let imageName = '';
+    
+    if (isFwd) {
+        // Freewheeling diode configuration (only works with uncontrolled)
+        imageName = 'UncontrolledRLwithFWD.png';
+    } else if (isControlled) {
+        // Controlled RLE circuit
+        imageName = 'ControlledRLE.png';
+    } else {
+        // Uncontrolled RLE circuit
+        imageName = 'UncontrolledRLE.png';
+    }
+    
+    // Set the image source
+    circuitDiagram.src = `/static/images/${imageName}`;
+    
+    // Show the circuit diagram
+    circuitDiagram.style.display = 'block';
 }
 
 /**
