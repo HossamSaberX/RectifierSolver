@@ -6,20 +6,60 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
     """Solver for uncontrolled half-wave rectifier with RL load and freewheeling diode"""
     
     def __init__(self, circuit_type, Vm, f, R, L, Vdc=0):
-        # For FWD circuit, Vdc should always be 0, but we keep the parameter for compatibility
+        # For FWD circuit, Vdc should always be 0
         super().__init__(circuit_type, Vm, f, R, L, 0)
         self.constant_B = 0  # Integration constant for the freewheeling current
-        
+    
     def solve(self):
         """Implement the solution for uncontrolled half-wave rectifier with FWD"""
         # For FWD, alpha is always 0 (conduction starts at zero crossing)
         self.alpha = 0
         
-        # Step 1: Find constants A and B for steady state solution
-        # We need to solve a system of equations:
-        # 1. i(0) from positive half equation = i(2π) from negative half equation [steady state]
-        # 2. i(π-) from positive half equation = i(π+) from negative half equation [continuity at π]
+        # For FWD circuit, the main diode conducts from 0 to π
+        self.beta = np.pi
         
+        # Find constants A and B for steady state solution
+        self._solve_constants()
+        
+        # Calculate conducting angle and time (reusing parent class properties)
+        self.conducting_angle = self.beta - self.alpha  # Should be π
+        self.conducting_time = 1000 * self.conducting_angle / self.w  # ms
+        
+        # Calculate currents and voltages using waveforms
+        waveforms = self.generate_waveforms()
+        wt_values = np.array(waveforms['time'])
+        current_values = np.array(waveforms['i_out'])
+        voltage_values = np.array(waveforms['vo'])
+        
+        # Calculate performance metrics
+        self.Iavg = np.mean(current_values)
+        self.Irms = np.sqrt(np.mean(current_values**2))
+        self.Vavg = np.mean(voltage_values)
+        self.Vrms = np.sqrt(np.mean(voltage_values**2))
+        
+        # Source RMS values
+        Vs_rms = self.Vm / np.sqrt(2)
+        
+        # Calculate power on load: I²R
+        self.power = self.Irms**2 * self.R
+        
+        # DC power
+        Pdc = self.Vavg * self.Iavg
+        
+        # RMS power
+        Prms = self.Vrms * self.Irms
+        
+        # Calculate derived metrics - reusing parent class formulas
+        self.power_factor = self.power / (Vs_rms * self.Irms) if (Vs_rms * self.Irms) > 0 else 0
+        self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
+        self.ripple_factor = np.sqrt(self.form_factor**2 - 1) if self.Vavg > 0 else 0
+        self.efficiency = Pdc / Prms if Prms > 0 else 0
+        
+        # Use parent class method to generate final results
+        return self.generate_results()
+    
+    def _solve_constants(self):
+        """Solve for constants A and B using boundary conditions"""
         def equations(vars):
             A, B = vars
             
@@ -42,82 +82,16 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
             eq2 = i_pi_pos - i_pi_neg
             
             return [eq1, eq2]
-            
+        
         # Initial guess for A and B
         initial_guess = [0.1, 0.1]
         A, B = fsolve(equations, initial_guess)
         
         self.A = A
         self.constant_B = B
-        
-        # For FWD circuit, the main diode conducts from 0 to π
-        self.beta = np.pi
-        
-        # Calculate conducting angle and time
-        self.conducting_angle = self.beta - self.alpha  # Should be π
-        self.conducting_time = 1000 * self.conducting_angle / self.w  # ms
-        
-        # Calculate currents and voltages
-        num_points = 1000
-        wt_values = np.linspace(0, 2*np.pi, num_points)
-        
-        # Current function for both halves
-        current_values = np.zeros_like(wt_values)
-        
-        # First half (0 to π) - main diode conducting
-        first_half = wt_values < np.pi
-        current_values[first_half] = (self.Vm/self.Z) * np.sin(wt_values[first_half] - self.theta) + self.A * np.exp(-wt_values[first_half]/self.wTau)
-        
-        # Second half (π to 2π) - freewheeling diode conducting
-        second_half = wt_values >= np.pi
-        current_values[second_half] = self.constant_B * np.exp(-(wt_values[second_half] - np.pi)/self.wTau)
-        
-        # Calculate Average Current (Iavg)
-        self.Iavg = np.mean(current_values)
-        
-        # Calculate RMS Current (Irms)
-        self.Irms = np.sqrt(np.mean(current_values**2))
-        
-        # Output voltage waveform
-        voltage_values = np.zeros_like(wt_values)
-        voltage_values[first_half] = self.Vm * np.sin(wt_values[first_half])  # Vsource during first half
-        # Second half remains zero (FWD keeps Vo at 0V)
-        
-        # Calculate Average Voltage (Vavg)
-        self.Vavg = np.mean(voltage_values)
-        
-        # Calculate RMS Voltage (Vrms)
-        self.Vrms = np.sqrt(np.mean(voltage_values**2))
-        
-        # Calculate Performance Metrics
-        # Source RMS values
-        Vs_rms = self.Vm / np.sqrt(2)
-        
-        # Calculate power on load: I²R
-        self.power = self.Irms**2 * self.R
-        
-        # DC power
-        Pdc = self.Vavg * self.Iavg
-        
-        # RMS power
-        Prms = self.Vrms * self.Irms
-        
-        # Power factor
-        self.power_factor = self.power / (Vs_rms * self.Irms) if (Vs_rms * self.Irms) > 0 else 0
-        
-        # Form factor is Vrms/Vavg
-        self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
-        
-        # Ripple factor = sqrt((Vrms/Vavg)^2 - 1)
-        self.ripple_factor = np.sqrt(self.form_factor**2 - 1) if self.Vavg > 0 else 0
-        
-        # Efficiency is DC power / total power
-        self.efficiency = Pdc / Prms if Prms > 0 else 0
-        
-        return self.generate_results()
     
     def current_function(self, wt):
-        """Calculate the current at angular position wt"""
+        """Calculate the current at angular position wt - overridden for FWD circuit"""
         if wt < np.pi:
             # First half: Main diode conducting
             return (self.Vm/self.Z) * np.sin(wt - self.theta) + self.A * np.exp(-wt/self.wTau)
@@ -126,8 +100,7 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
             return self.constant_B * np.exp(-(wt - np.pi)/self.wTau)
     
     def generate_waveforms(self):
-        """Generate waveform data for visualization
-        Override to handle the freewheeling diode case"""
+        """Generate waveform data for FWD circuit visualization"""
         wt = np.linspace(0, 2*np.pi, 1000)  # Angular position from 0 to 2π
         
         # Source voltage
@@ -151,7 +124,7 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
         vd_fw[first_half] = -vs[first_half]  # Blocking in first half
         vd_fw[~first_half] = 0  # Conducting in second half
         
-        # Current 
+        # Current calculation
         i_out = np.zeros_like(wt)
         for i, t in enumerate(wt):
             i_out[i] = self.current_function(t)
@@ -166,7 +139,6 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
         
         # Inductor voltage (L * di/dt)
         vl = np.zeros_like(wt)
-        # Use np.gradient to calculate di/dt, adjust for actual time by multiplying by angular frequency
         di_dt = np.gradient(i_out, wt)
         vl = self.L * di_dt * self.w
         
