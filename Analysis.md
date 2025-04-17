@@ -68,10 +68,10 @@ Current equation and all other calculations remain identical to uncontrolled cir
 - 0 at -ve half
 - **Current**:
 - i = Vm/z* sin(wt-theta) + Ae^(-wt/wTau) at +ve half cycle
-- i = Be^(-(wt-pi)/wTau)
+- i = Be^(-(wt-pi)/wTau) at -ve half cycle
 - Get A and B by setting i(pi-) = i(pi+)
 - i(0) = i(2pi)
 - Solve for A and B numercially
-- isource is gonne be the +ve half only of the out
+- isource is the +ve half only of the iout
 - ifwd(freewheeling) is the -ve half
-- **Remaining Parmaters as the old ones to calc**:
+- **Remaining Parmaters follow the same rules of the above configurations**
