@@ -120,8 +120,10 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
         vd_main[first_half] = 0  # Conducting in first half
         vd_main[~first_half] = vs[~first_half]  # Blocking in second half
         
-        # Freewheeling diode voltage (zero during conduction in second half, vs in first half)
-        vd_fw[first_half] = -vs[first_half]  # Blocking in first half
+        # Freewheeling diode voltage correction:
+        # During positive half (0 to π): FWD is reverse biased, so vd_fw = +vs (not -vs)
+        # During negative half (π to 2π): FWD is conducting, so vd_fw = 0
+        vd_fw[first_half] = vs[first_half]  # Blocking with +vs voltage in first half
         vd_fw[~first_half] = 0  # Conducting in second half
         
         # Current calculation
@@ -150,10 +152,10 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
             'vs': vs.tolist(),
             'vo': vo.tolist(),
             'vd': vd_main.tolist(),
-            'vd_fw': vd_fw.tolist(),  # Additional freewheeling diode voltage
+            'vd_fw': vd_fw.tolist(),  # Corrected freewheeling diode voltage
             'i_out': i_out.tolist(),
-            'i_source': i_source.tolist(),  # Additional source current
-            'i_fw': i_fw.tolist(),  # Additional freewheeling current
+            'i_source': i_source.tolist(),
+            'i_fw': i_fw.tolist(),
             'vl': vl.tolist(),
             'vr': vr.tolist()
         }
