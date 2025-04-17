@@ -15,32 +15,36 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
         # For FWD, alpha is always 0 (conduction starts at zero crossing)
         self.alpha = 0
         
-        # Step 1: Find constants A and B
+        # Step 1: Find constants A and B for steady state solution
         # We need to solve a system of equations:
-        # 1. i(0) = i(2π) - steady state condition
-        # 2. i(π-) = i(π+) - continuity of current at π
+        # 1. i(0) from positive half equation = i(2π) from negative half equation [steady state]
+        # 2. i(π-) from positive half equation = i(π+) from negative half equation [continuity at π]
         
         def equations(vars):
             A, B = vars
-            # Current at 0 using second half equation (with B)
-            i_2pi = B * np.exp(-2*np.pi/self.wTau)
             
-            # Current at 0 should equal i(2π) for steady state
-            eq1 = (self.Vm/self.Z) * np.sin(-self.theta) + A - i_2pi
+            # Current from positive half equation (main diode conducting) at t=0
+            i_0_pos = (self.Vm/self.Z) * np.sin(-self.theta) + A
             
-            # Current at π- using first half equation (with A)
-            i_pi_minus = (self.Vm/self.Z) * np.sin(np.pi - self.theta) + A * np.exp(-np.pi/self.wTau)
+            # Current from negative half equation (freewheeling diode) at t=2π
+            i_2pi_neg = B * np.exp(-(2*np.pi - np.pi)/self.wTau)
             
-            # Current at π+ using second half equation (with B)
-            i_pi_plus = B
+            # For steady state: i(0) from positive half = i(2π) from negative half
+            eq1 = i_0_pos - i_2pi_neg
             
-            # Continuity of current at π
-            eq2 = i_pi_minus - i_pi_plus
+            # Current from positive half equation at t=π
+            i_pi_pos = (self.Vm/self.Z) * np.sin(np.pi - self.theta) + A * np.exp(-np.pi/self.wTau)
+            
+            # Current from negative half equation at t=π
+            i_pi_neg = B
+            
+            # For continuity at π: i(π-) = i(π+)
+            eq2 = i_pi_pos - i_pi_neg
             
             return [eq1, eq2]
             
         # Initial guess for A and B
-        initial_guess = [0.0, 0.0]
+        initial_guess = [0.1, 0.1]
         A, B = fsolve(equations, initial_guess)
         
         self.A = A
@@ -101,8 +105,8 @@ class FreewheelingHalfWaveSolver(BaseRectifierSolver):
         # Power factor
         self.power_factor = self.power / (Vs_rms * self.Irms) if (Vs_rms * self.Irms) > 0 else 0
         
-        # Form factor is Irms/Iavg
-        self.form_factor = self.Vrms / self.Vavg
+        # Form factor is Vrms/Vavg
+        self.form_factor = self.Vrms / self.Vavg if self.Vavg > 0 else 0
         
         # Ripple factor = sqrt((Vrms/Vavg)^2 - 1)
         self.ripple_factor = np.sqrt(self.form_factor**2 - 1) if self.Vavg > 0 else 0
