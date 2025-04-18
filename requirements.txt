@@ -1,6 +1,5 @@
 flask
 numpy
 scipy
-matplotlib
 Flask-WTF
 gunicorn

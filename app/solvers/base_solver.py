@@ -1,8 +1,4 @@
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-from io import BytesIO
-import base64
 from scipy.optimize import fsolve
 
 class BaseRectifierSolver:

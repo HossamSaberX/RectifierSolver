@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify
 from app.solvers import UncontrolledHalfWaveSolver, ControlledHalfWaveSolver, FreewheelingHalfWaveSolver
 
 # Initialize Flask app with the correct template folder
