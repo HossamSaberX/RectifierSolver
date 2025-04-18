@@ -53,7 +53,7 @@ Users can input circuit parameters and instantly see calculated results and wave
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YourUsername/RectifierSolver.git
+git clone https://github.com/HossamSaberX/RectifierSolver.git
 ```
 
 2. Install required dependencies:
@@ -63,14 +63,13 @@ pip install -r requirements.txt
 
 3. Run the application:
 ```bash
-python app.py
+python main.py
 ```
-
-## Deployment
 
 ## Contributing
 
-Contributions are welcoemd and neede to expand the capabilities of RectifierSolver! The project particularly needs:
+Contributions are welcomed and needed to expand the capabilities of RectifierSolver! 
+The project particularly needs:
 
 ### High Priority Additions
 1. **Full Wave Rectifier Implementations**:
@@ -85,10 +84,9 @@ Contributions are welcoemd and neede to expand the capabilities of RectifierSolv
 
 ### How to Contribute
 1. Fork the repository
-2. Create a new branch for your feature (`git checkout -b feature/your-feature-name`)
+2. Create a new branch for your addition
 3. Implement your changes
-4. Add appropriate tests
-5. Submit a pull request with a clear description of your additions
+4. Submit a pull request with a clear description of your additions
 
 
 ## License
