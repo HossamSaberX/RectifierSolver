@@ -61,7 +61,7 @@ git clone https://github.com/HossamSaberX/RectifierSolver.git
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Run the server then follow the instructions:
 ```bash
 python main.py
 ```
