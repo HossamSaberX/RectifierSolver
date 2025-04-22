@@ -70,3 +70,21 @@ Current equation and all other calculations remain identical to uncontrolled cir
 
 ### 2. Full Wave
 #### 2.1 Single Phase Full Wave Controlled RLE
+- First, check the state of current whether it's:
+  1. Continuous 
+  2. Discontinuous
+
+- To check:
+  - Discontinuous if Beta (the extinction angle) is less than pi + alpha
+  - Continuous if Beta is bigger than pi + alpha
+
+- For discontinuous state:
+  - It follows exactly the same logic of half wave RLE
+  - The period is pi instead of two pi
+  - Integration would go from 0 to pi and divide by pi
+  - Follow the same logic exactly as half wave
+
+- For continuous state:
+  - No waveforms to generate
+  - Vo equals 2Vm/pi cosine alpha
+  - Io = (Vo-Vdc)/R
