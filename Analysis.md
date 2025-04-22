@@ -88,3 +88,15 @@ Current equation and all other calculations remain identical to uncontrolled cir
   - No waveforms to generate
   - Vo equals 2Vm/pi cosine alpha
   - Io = (Vo-Vdc)/R
+
+#### 2.2 Uncontrolled Full Wave RLE
+- First, check the state of current whether it's:
+  1. Discontinuous (if Beta < pi)
+  2. Continuous (if Beta > pi)
+
+- For discontinuous state:
+  - Same as halfwave RLE exactly but change the period from 2π to π 
+
+- For continuous state:
+  - Io = (Vo - Vdc)/R
+  - Use Fourier chaining (more on that later.........)
