@@ -30,12 +30,10 @@ Users can input circuit parameters and instantly see calculated results and wave
 
 ###### Output Calculations
 1. **Average Voltage**:
-   - 1/2π × [∫(Vdc) from 0 to alpha + ∫(Vs) from alpha to beta + ∫(Vdc) from beta to 2π]
 2. **RMS Voltage (Vrms)**:
-   - Calculate using standard method
 
 ###### Performance Metrics
-- Power on load: VdcIavg + Irms²×R
+- Power on load
 - Power factor
 - Form factor
 - Ripple factor
@@ -58,7 +56,7 @@ Users can input circuit parameters and instantly see calculated results and wave
 #### Full Wave
 
 ##### 1. Uncontrolled RLE Full Wave
-- Analysis considers both **discontinuous** (β < π) and **continuous** (β > π) conduction modes.
+- Analysis considers both **discontinuous** and **continuous** conduction modes.
 
 ## Installation
 
