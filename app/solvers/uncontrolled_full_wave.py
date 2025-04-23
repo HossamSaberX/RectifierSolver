@@ -13,13 +13,10 @@ class UncontrolledFullWaveSolver(BaseRectifierSolver):
         # Step 2: Find A by setting i(alpha) = 0
         def equation_for_A(A):
             return (self.Vm/self.Z) * np.sin(self.alpha - self.theta) - self.Vdc/self.R + A * np.exp(-self.alpha/self.wTau)
-        A_initial = [0.0]
-        self.A = np.float64(np.roots([1, 0, 0])[0]) if self.alpha == 0 else np.float64(np.linalg.lstsq([[1]], [0], rcond=None)[0][0])  # fallback if needed
-        try:
-            from scipy.optimize import fsolve
-            self.A = fsolve(equation_for_A, A_initial)[0]
-        except Exception:
-            pass
+        
+        A_initial = [0.0]  # Initial guess
+        from scipy.optimize import fsolve
+        self.A = fsolve(equation_for_A, A_initial)[0]
 
         # Step 3: Find beta by setting i(beta) = 0
         def equation_for_beta(beta):

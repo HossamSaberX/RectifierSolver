@@ -32,6 +32,9 @@ export function setupFormHandlers() {
     // Set up circuit type change handler
     setupCircuitTypeChangeHandler();
     
+    // Set up wave type change handler
+    setupWaveTypeChangeHandler();
+    
     // Update circuit diagram initially
     updateCircuitDiagram();
 }
@@ -81,6 +84,18 @@ function setupCircuitTypeChangeHandler() {
 }
 
 /**
+ * Set up handler for wave type change to update circuit diagram
+ */
+function setupWaveTypeChangeHandler() {
+    const waveRadios = document.querySelectorAll('input[name="wave_type"]');
+    
+    // Add change listener to all wave type radio buttons
+    waveRadios.forEach(radio => {
+        radio.addEventListener('change', updateCircuitDiagram);
+    });
+}
+
+/**
  * Set up handler for control type change to toggle firing angle input
  */
 function setupControlTypeChangeHandler() {
@@ -114,7 +129,12 @@ function updateCircuitDiagram() {
     // Set the appropriate image based on the selected options
     let imageName = '';
     if (isFullWave) {
-        imageName = 'placeholder_fullwave.png'; // Placeholder image for full wave
+        if (isControlled) {
+            // Note: FW_ControlledRLE.png may need to be added to the images folder
+            imageName = 'FW_UncontrolledRLE.png'; // Fallback to uncontrolled for now
+        } else {
+            imageName = 'FW_UncontrolledRLE.png';
+        }
     } else if (isFwd) {
         imageName = 'UncontrolledRLwithFWD.png';
     } else if (isControlled) {
@@ -125,13 +145,47 @@ function updateCircuitDiagram() {
     circuitDiagram.src = `/static/images/${imageName}`;
     circuitDiagram.style.display = 'block';
 
-    // Show mode indicator for full wave
+    // Update discontinuous mode indicator based on circuit parameters
+    updateDiscontinuousIndicator();
+}
+
+/**
+ * Check if the circuit is in discontinuous mode based on user inputs
+ * and update the indicator accordingly
+ */
+function updateDiscontinuousIndicator() {
     const fwIndicator = document.getElementById('fw-indicator');
-    if (isFullWave) {
-        // Only discontinuous implemented, so always red
-        fwIndicator.innerHTML = '<span class="badge bg-danger">Discontinuous Mode</span>';
-    } else {
+    const isFullWave = document.getElementById('full-wave').checked;
+    
+    if (!isFullWave) {
+        // Clear indicator for non-full wave circuits
         fwIndicator.innerHTML = '';
+        return;
+    }
+    
+    // For full wave, calculate if likely in discontinuous mode
+    const R = parseFloat(document.getElementById('R').value);
+    const L = parseFloat(document.getElementById('L').value);
+    const f = parseFloat(document.getElementById('f').value);
+    const Vrms = parseFloat(document.getElementById('Vrms').value);
+    const Vm = Vrms * Math.sqrt(2);
+    const Vdc = parseFloat(document.getElementById('Vdc').value || 0);
+    
+    // Calculate the normalized time constant
+    const wTau = 2 * Math.PI * f * L / R;
+    
+    // Calculate ratio of DC voltage to peak AC voltage
+    const vRatio = Vdc / Vm;
+    
+    // Estimate if the circuit is in discontinuous mode
+    // Higher inductance and lower DC voltage tend to favor continuous mode
+    // This is a simplified heuristic - actual calculation done by the server
+    if (wTau > 1 && vRatio < 0.5) {
+        // Likely continuous mode
+        fwIndicator.innerHTML = '<span class="badge bg-success">Likely Continuous Mode</span>';
+    } else {
+        // Likely discontinuous mode
+        fwIndicator.innerHTML = '<span class="badge bg-warning">Likely Discontinuous Mode</span>';
     }
 }
 
@@ -206,6 +260,11 @@ function submitFormData() {
         // Show results
         displayResults(data);
         document.getElementById('results').classList.remove('d-none');
+        
+        // Update discontinuous mode indicator with actual calculation results
+        if (formData.wave_type === 'full') {
+            updateDiscontinuousIndicatorFromResults(data);
+        }
     })
     .catch(error => {
         document.getElementById('loading').classList.add('d-none');
@@ -213,4 +272,20 @@ function submitFormData() {
         console.error('Error:', error);
         alert('An error occurred while processing your request.');
     });
+}
+
+/**
+ * Update the discontinuous indicator based on actual calculation results
+ */
+function updateDiscontinuousIndicatorFromResults(data) {
+    const fwIndicator = document.getElementById('fw-indicator');
+    
+    // In a full wave rectifier, if beta < pi, it's discontinuous
+    const beta = data.parameters.beta;
+    
+    if (beta < Math.PI) {
+        fwIndicator.innerHTML = '<span class="badge bg-danger">Discontinuous Mode</span>';
+    } else {
+        fwIndicator.innerHTML = '<span class="badge bg-success">Continuous Mode</span>';
+    }
 }
