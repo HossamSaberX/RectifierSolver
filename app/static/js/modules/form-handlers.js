@@ -109,26 +109,30 @@ function updateCircuitDiagram() {
     const circuitDiagram = document.getElementById('circuit-diagram');
     const isControlled = document.getElementById('controlled').checked;
     const isFwd = document.getElementById('fwd-config').checked;
-    
+    const isFullWave = document.getElementById('full-wave').checked;
+
     // Set the appropriate image based on the selected options
     let imageName = '';
-    
-    if (isFwd) {
-        // Freewheeling diode configuration (only works with uncontrolled)
+    if (isFullWave) {
+        imageName = 'placeholder_fullwave.png'; // Placeholder image for full wave
+    } else if (isFwd) {
         imageName = 'UncontrolledRLwithFWD.png';
     } else if (isControlled) {
-        // Controlled RLE circuit
         imageName = 'ControlledRLE.png';
     } else {
-        // Uncontrolled RLE circuit
         imageName = 'UncontrolledRLE.png';
     }
-    
-    // Set the image source
     circuitDiagram.src = `/static/images/${imageName}`;
-    
-    // Show the circuit diagram
     circuitDiagram.style.display = 'block';
+
+    // Show mode indicator for full wave
+    const fwIndicator = document.getElementById('fw-indicator');
+    if (isFullWave) {
+        // Only discontinuous implemented, so always red
+        fwIndicator.innerHTML = '<span class="badge bg-danger">Discontinuous Mode</span>';
+    } else {
+        fwIndicator.innerHTML = '';
+    }
 }
 
 /**

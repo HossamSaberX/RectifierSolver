@@ -82,6 +82,24 @@ export function plotWaveforms(waveforms) {
         plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
     }
     
+    // Full-wave special handling
+    if (waveforms.id1 && waveforms.id2) {
+        plotFullWaveCurrents(time, waveforms.i_out, waveforms.id1, waveforms.id2, waveforms.id3, waveforms.id4);
+    } else if (waveforms.i_source && waveforms.i_fw) {
+        plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw, piMarkers, piAnnotations);
+    } else {
+        plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+    }
+    
+    // Diode voltages for full wave
+    if (waveforms.vd1 && waveforms.vd2) {
+        plotFullWaveDiodeVoltages(time, waveforms.vd1, waveforms.vd2, waveforms.vd3, waveforms.vd4);
+    } else if (waveforms.vd_fw) {
+        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw, piMarkers, piAnnotations);
+    } else {
+        plotDiodeVoltage(time, waveforms.vd, piMarkers, piAnnotations);
+    }
+    
     plotInductorVoltage(time, waveforms.vl, piMarkers, piAnnotations);
     plotResistorVoltage(time, waveforms.vr, piMarkers, piAnnotations);
 }
@@ -412,4 +430,45 @@ function plotResistorVoltage(time, vr, piMarkers, piAnnotations) {
     };
     
     Plotly.newPlot('vr-chart', [vrTrace], vrLayout);
+}
+
+/**
+ * Plot all currents for full-wave circuit
+ */
+function plotFullWaveCurrents(time, i_out, id1, id2, id3, id4) {
+    const traces = [
+        { x: time, y: i_out, mode: 'lines', name: 'Output Current', line: { color: 'rgb(214,39,40)', width: 2 } },
+        { x: time, y: id1, mode: 'lines', name: 'Diode 1 Current', line: { color: 'rgb(31,119,180)', width: 1, dash: 'dot' } },
+        { x: time, y: id2, mode: 'lines', name: 'Diode 2 Current', line: { color: 'rgb(44,160,44)', width: 1, dash: 'dot' } },
+        { x: time, y: id3, mode: 'lines', name: 'Diode 3 Current', line: { color: 'rgb(255,127,14)', width: 1, dash: 'dot' } },
+        { x: time, y: id4, mode: 'lines', name: 'Diode 4 Current', line: { color: 'rgb(148,103,189)', width: 1, dash: 'dot' } }
+    ];
+    Plotly.newPlot('i-chart', traces, {
+        title: 'Currents vs. Angular Position (ωt)',
+        xaxis: { title: 'Angular Position (rad)', range: [0, 2*Math.PI], tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI], ticktext: ['0', 'π/2', 'π', '3π/2', '2π'] },
+        yaxis: { title: 'Current (A)' },
+        margin: { t: 40, r: 30, l: 60, b: 40 },
+        hovermode: 'closest',
+        legend: { x: 0.01, y: 0.99, traceorder: 'normal', bgcolor: 'rgba(255,255,255,0.6)' }
+    });
+}
+
+/**
+ * Plot all diode voltages for full-wave circuit
+ */
+function plotFullWaveDiodeVoltages(time, vd1, vd2, vd3, vd4) {
+    const traces = [
+        { x: time, y: vd1, mode: 'lines', name: 'Diode 1 Voltage', line: { color: 'rgb(31,119,180)', width: 1 } },
+        { x: time, y: vd2, mode: 'lines', name: 'Diode 2 Voltage', line: { color: 'rgb(44,160,44)', width: 1 } },
+        { x: time, y: vd3, mode: 'lines', name: 'Diode 3 Voltage', line: { color: 'rgb(255,127,14)', width: 1 } },
+        { x: time, y: vd4, mode: 'lines', name: 'Diode 4 Voltage', line: { color: 'rgb(148,103,189)', width: 1 } }
+    ];
+    Plotly.newPlot('vd-chart', traces, {
+        title: 'Diode Voltages vs. Angular Position (ωt)',
+        xaxis: { title: 'Angular Position (rad)', range: [0, 2*Math.PI], tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI], ticktext: ['0', 'π/2', 'π', '3π/2', '2π'] },
+        yaxis: { title: 'Voltage (V)' },
+        margin: { t: 40, r: 30, l: 60, b: 40 },
+        hovermode: 'closest',
+        legend: { x: 0.01, y: 0.99, traceorder: 'normal', bgcolor: 'rgba(255,255,255,0.6)' }
+    });
 }
