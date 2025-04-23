@@ -27,6 +27,25 @@ export function displayResults(data) {
     document.getElementById('conducting-time-value').textContent = data.parameters.conducting_time.toFixed(2);
     document.getElementById('A-value').textContent = data.parameters.A.toFixed(4);
     
+    // Handle Continuity Check display for Uncontrolled RLE
+    const isUncontrolled = document.getElementById('uncontrolled').checked;
+    const isRLE = document.getElementById('rle-config').checked;
+    const continuityRow = document.getElementById('continuity-check-row');
+    const continuityStatusEl = document.getElementById('continuity-status');
+
+    if (isUncontrolled && isRLE) {
+        continuityRow.style.display = ''; // Show the row
+        const beta = data.parameters.beta;
+        const isContinuous = beta > Math.PI;
+        continuityStatusEl.textContent = isContinuous ? 'Continuous' : 'Discontinuous';
+        continuityStatusEl.classList.toggle('text-success', isContinuous);
+        continuityStatusEl.classList.toggle('text-warning', !isContinuous);
+    } else {
+        continuityRow.style.display = 'none'; // Hide the row for other configs
+        continuityStatusEl.textContent = '-';
+        continuityStatusEl.classList.remove('text-success', 'text-warning');
+    }
+
     // Display performance metrics
     document.getElementById('power-value').textContent = data.performance.power.toFixed(4);
     document.getElementById('Iavg-value').textContent = data.performance.Iavg.toFixed(4);

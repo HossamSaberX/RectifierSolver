@@ -436,6 +436,38 @@ export function getFormulaContent(formulaType) {
                     </div>
                 </div>
             </div>
+        `,
+        'continuity-check': `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>Uncontrolled RLE Continuity Check</h5>
+                    <p>Determines if the load current is continuous or discontinuous based on the extinction angle (β).</p>
+                    
+                    <div class="mb-3">
+                        <h6>Conditions:</h6>
+                        <ul>
+                            <li><strong>Discontinuous Conduction:</strong> If $ \\beta < \\pi $</li>
+                            <li><strong>Continuous Conduction:</strong> If $ \\beta > \\pi $</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Analysis for Discontinuous Conduction ($ \\beta < \\pi $):</h6>
+                        <p>The analysis is the same as for the <strong>Uncontrolled Half-Wave RLE Rectifier</strong>, but the period is considered $ \\pi $ instead of $ 2\\pi $ for calculating average and RMS values.</p>
+                        <p>For example, the average current would be:</p>
+                        <p>$$I_{avg} = \\frac{1}{\\pi} \\int_{\\alpha}^{\\beta} i(\\omega t) \\, d(\\omega t)$$</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Analysis for Continuous Conduction ($ \\beta > \\pi $):</h6>
+                        <p class="text-muted">........TODO: Detailed analysis for continuous conduction .......</p>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <p>The continuity of the current significantly affects the calculation of performance metrics like average and RMS values.</p>
+                    </div>
+                </div>
+            </div>
         `
     };
     
