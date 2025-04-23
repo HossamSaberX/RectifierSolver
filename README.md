@@ -22,22 +22,26 @@ Users can input circuit parameters and instantly see calculated results and wave
 
 ## Current Circuit Implementations
 
-### 1. Uncontrolled RLE Half Wave
+### Single Phase
 
-#### Output Calculations
+#### Half Wave
+
+##### 1. Uncontrolled RLE Half Wave
+
+###### Output Calculations
 1. **Average Voltage**:
-   - 1/2π × [∫(Vdc) from 0 to alpha + ∫(Vs) from alpha to beta + ∫ from beta to 2π]
+   - 1/2π × [∫(Vdc) from 0 to alpha + ∫(Vs) from alpha to beta + ∫(Vdc) from beta to 2π]
 2. **RMS Voltage (Vrms)**:
    - Calculate using standard method
 
-#### Performance Metrics
+###### Performance Metrics
 - Power on load: VdcIavg + Irms²×R
 - Power factor
 - Form factor
 - Ripple factor
 - Efficiency
 
-#### Waveforms Generated
+###### Waveforms Generated
 - Vsource
 - Vout
 - Vdiode
@@ -45,15 +49,23 @@ Users can input circuit parameters and instantly see calculated results and wave
 - VL
 - VR
 
-### 2. Controlled RLE Half Wave
+##### 2. Controlled RLE Half Wave
+- Similar analysis to Uncontrolled RLE Half Wave, but with a user-defined firing angle (α) ≥ αmin.
 
-### 3. RL + Freewheeling Diode (uncontrolled)
+##### 3. RL + Freewheeling Diode (Uncontrolled)
+- Specific analysis for circuits with a freewheeling diode.
+
+#### Full Wave
+
+##### 1. Uncontrolled RLE Full Wave
+- Analysis considers both **discontinuous** (β < π) and **continuous** (β > π) conduction modes.
 
 ## Installation
 
 1. Clone the repository:
 ```bash
 git clone https://github.com/HossamSaberX/RectifierSolver.git
+cd RectifierSolver
 ```
 
 2. Install required dependencies:
@@ -65,6 +77,42 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+
+### Troubleshooting / Using a Virtual Environment
+
+If you encounter issues with dependencies or running the server, it's highly recommended to use a Python virtual environment. This isolates the project's dependencies from your global Python installation.
+
+1.  **Create a virtual environment** (do this inside the `RectifierSolver` directory):
+    ```bash
+    python -m venv venv
+    ```
+    (Replace `python` with `python3` if needed on your system).
+
+2.  **Activate the virtual environment**:
+    *   **On Windows:**
+        ```bash
+        .\venv\Scripts\activate
+        ```
+    *   **On Linux/macOS:**
+        ```bash
+        source venv/bin/activate
+        ```
+    You should see `(venv)` appear at the beginning of your terminal prompt.
+
+3.  **Install dependencies within the activated environment**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Run the server**:
+    ```bash
+    python main.py
+    ```
+
+5.  **To deactivate** the virtual environment when you're done:
+    ```bash
+    deactivate
+    ```
 
 ## Contributing
 
