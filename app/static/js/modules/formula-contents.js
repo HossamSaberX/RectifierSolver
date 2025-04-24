@@ -462,7 +462,22 @@ export function getFormulaContent(formulaType) {
                     ` : `
                     <div class="mb-3">
                         <h6>Analysis for Continuous Conduction ($ \\beta > \\pi $):</h6>
-                        <p class="text-muted">........TODO: Detailed analysis for continuous conduction .......</p>
+                        <p>For continuous conduction, the Fourier chain approach is used where the output current consists of:</p>
+                        <ul>
+                            <li>A DC component: $I_{avg} = \\frac{V_{avg} - V_{dc}}{R}$ where $V_{avg} = \\frac{2V_m}{\\pi}$</li>
+                            <li>AC components (even harmonics only): 2, 4, 6, etc.</li>
+                        </ul>
+                        <p>The voltage harmonics are calculated as:</p>
+                        <p>$$V_n = \\frac{2V_m}{\\pi} \\left(\\frac{1}{n-1} - \\frac{1}{n+1}\\right), \\text{ for } n = 2, 4, 6, ...$$</p>
+                        
+                        <p>The current at any instant is given by:</p>
+                        <p>$$i(\\omega t) = I_{avg} + \\sum_{n=2,4,6,...} \\frac{V_n}{Z_n} \\cos(n\\omega t + \\pi - \\theta_n)$$</p>
+                        
+                        <p>Where:</p>
+                        <ul>
+                            <li>$Z_n = \\sqrt{R^2 + (n\\omega L)^2}$ is the impedance at the $n^{th}$ harmonic</li>
+                            <li>$\\theta_n = \\arctan(\\frac{n\\omega L}{R})$ is the phase angle at the $n^{th}$ harmonic</li>
+                        </ul>
                     </div>
                     `}
 
