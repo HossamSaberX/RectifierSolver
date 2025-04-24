@@ -119,14 +119,11 @@ The project particularly needs:
 
 ### High Priority Additions
 1. **Full Wave Rectifier Implementations**:
-   - Uncontrolled Full Wave with RLE load
    - Controlled Full Wave with RLE load
-   - Full Wave with Freewheeling Diode
 
 2. **Three Phase Rectifier Implementations**:
    - Three Phase Half Wave (controlled and uncontrolled)
    - Three Phase Full Wave (controlled and uncontrolled)
-   - Three Phase with various load configurations
 
 ### How to Contribute
 1. Fork the repository
