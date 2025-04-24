@@ -99,4 +99,8 @@ Current equation and all other calculations remain identical to uncontrolled cir
 
 - For continuous state:
   - Io = (Vo - Vdc)/R
-  - Use Fourier chaining (more on that later.........)
+  - Use Fourier chaining approach
+  - Vout is V0 + summation from n = 2, 4, 6, .. till infinite for VnCos(nwot + pi) 
+    where Vn is 2Vm/pi*(1/n-1 - 1/n+1)
+  - Current is calculated using superposition as In = Vn / Zn
+  - Get the RMS of the current using: √(Io² + I2²/√2 + ...)
