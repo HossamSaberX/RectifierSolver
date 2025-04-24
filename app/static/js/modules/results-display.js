@@ -42,10 +42,22 @@ export function displayResults(data) {
     
     if (isFullWave) {
         continuityRow.style.display = 'table-row';
-        const status = data.parameters.beta > Math.PI ? 'Continuous' : 'Discontinuous';
+        const isContinuous = data.parameters.beta > Math.PI;
+        const status = isContinuous ? 'Continuous' : 'Discontinuous';
         document.getElementById('continuity-status').textContent = status;
+        
+        // Hide integration constant A row when in continuous mode for full-wave
+        const integrationConstantRow = document.getElementById('integration-constant-row');
+        if (integrationConstantRow) {
+            integrationConstantRow.style.display = isContinuous ? 'none' : 'table-row';
+        }
     } else {
         continuityRow.style.display = 'none';
+        // Always show integration constant A for half-wave
+        const integrationConstantRow = document.getElementById('integration-constant-row');
+        if (integrationConstantRow) {
+            integrationConstantRow.style.display = 'table-row';
+        }
     }
     
     // Plot waveforms
