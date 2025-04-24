@@ -88,11 +88,44 @@ function setupCircuitTypeChangeHandler() {
  */
 function setupWaveTypeChangeHandler() {
     const waveRadios = document.querySelectorAll('input[name="wave_type"]');
+    const fwdOption = document.getElementById('fwd-config');
+    const rleOption = document.getElementById('rle-config');
+    
+    // Function to update options based on wave type
+    function updateWaveTypeOptions() {
+        const isFullWave = document.getElementById('full-wave').checked;
+        
+        // Freewheeling diode is only available for half-wave rectifiers
+        fwdOption.disabled = isFullWave;
+        
+        // If full-wave is selected and FWD was checked, switch to RLE
+        if (isFullWave && fwdOption.checked) {
+            rleOption.checked = true;
+        }
+        
+        // Update the message explaining the constraint
+        const fwdLabel = document.querySelector('label[for="fwd-config"]')
+            .nextElementSibling; // Get the small text element
+        
+        if (isFullWave) {
+            fwdLabel.textContent = 'Only available for half-wave circuits';
+            fwdLabel.classList.add('text-danger');
+        } else {
+            fwdLabel.textContent = 'Only available for uncontrolled circuits';
+            fwdLabel.classList.remove('text-danger');
+        }
+        
+        // Update circuit diagram
+        updateCircuitDiagram();
+    }
     
     // Add change listener to all wave type radio buttons
     waveRadios.forEach(radio => {
-        radio.addEventListener('change', updateCircuitDiagram);
+        radio.addEventListener('change', updateWaveTypeOptions);
     });
+    
+    // Set initial state
+    updateWaveTypeOptions();
 }
 
 /**

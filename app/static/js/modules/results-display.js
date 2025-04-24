@@ -9,43 +9,22 @@ import { plotWaveforms } from './plot-waveforms.js';
  * Set up event handlers for the results view
  */
 export function setupResultViewHandlers() {
-    // Set up back button
-    document.getElementById('back-to-results').addEventListener('click', function() {
-        showMainResults();
-    });
+    // Back button to return from formula details to main results
+    document.getElementById('back-to-results').addEventListener('click', showMainResults);
 }
 
 /**
- * Display calculation results in the UI
- * @param {Object} data - The calculation results from the server
+ * Display results in the UI
+ * @param {Object} data - The results data from the solver
  */
 export function displayResults(data) {
-    // Display calculated parameters in radians
+    // Display parameter values
     document.getElementById('alpha-value').textContent = data.parameters.alpha.toFixed(4);
     document.getElementById('beta-value').textContent = data.parameters.beta.toFixed(4);
     document.getElementById('conducting-angle-value').textContent = data.parameters.conducting_angle.toFixed(4);
     document.getElementById('conducting-time-value').textContent = data.parameters.conducting_time.toFixed(2);
     document.getElementById('A-value').textContent = data.parameters.A.toFixed(4);
     
-    // Handle Continuity Check display for Uncontrolled RLE
-    const isUncontrolled = document.getElementById('uncontrolled').checked;
-    const isRLE = document.getElementById('rle-config').checked;
-    const continuityRow = document.getElementById('continuity-check-row');
-    const continuityStatusEl = document.getElementById('continuity-status');
-
-    if (isUncontrolled && isRLE) {
-        continuityRow.style.display = ''; // Show the row
-        const beta = data.parameters.beta;
-        const isContinuous = beta > Math.PI;
-        continuityStatusEl.textContent = isContinuous ? 'Continuous' : 'Discontinuous';
-        continuityStatusEl.classList.toggle('text-success', isContinuous);
-        continuityStatusEl.classList.toggle('text-warning', !isContinuous);
-    } else {
-        continuityRow.style.display = 'none'; // Hide the row for other configs
-        continuityStatusEl.textContent = '-';
-        continuityStatusEl.classList.remove('text-success', 'text-warning');
-    }
-
     // Display performance metrics
     document.getElementById('power-value').textContent = data.performance.power.toFixed(4);
     document.getElementById('Iavg-value').textContent = data.performance.Iavg.toFixed(4);
@@ -57,11 +36,26 @@ export function displayResults(data) {
     document.getElementById('ripple-factor-value').textContent = data.performance.ripple_factor.toFixed(4);
     document.getElementById('efficiency-value').textContent = (data.performance.efficiency * 100).toFixed(2);
     
-    // Display waveforms
+    // Show/hide continuity check row for full-wave rectifiers
+    const continuityRow = document.getElementById('continuity-check-row');
+    const isFullWave = document.querySelector('input[name="wave_type"]:checked').value === 'full';
+    
+    if (isFullWave) {
+        continuityRow.style.display = 'table-row';
+        const status = data.parameters.beta > Math.PI ? 'Continuous' : 'Discontinuous';
+        document.getElementById('continuity-status').textContent = status;
+    } else {
+        continuityRow.style.display = 'none';
+    }
+    
+    // Plot waveforms
     plotWaveforms(data.waveforms);
     
-    // Set up formula detail buttons
+    // Set up formula buttons
     setupFormulaButtons();
+    
+    // Ensure we're showing main results view, not formula details
+    showMainResults();
 }
 
 /**
@@ -106,14 +100,11 @@ function showFormulaDetails(formulaType) {
 }
 
 /**
- * Show the main results view (hide formula details)
+ * Switch the display back to main results from formula details
  */
 export function showMainResults() {
-    // Hide formula details and show main results
     document.getElementById('main-results-view').classList.remove('d-none');
     document.getElementById('formula-details-view').classList.add('d-none');
     document.getElementById('back-to-results').classList.add('d-none');
-    
-    // Update header
     document.getElementById('results-header').textContent = 'Calculated Parameters';
 }
