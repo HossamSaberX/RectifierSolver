@@ -6,8 +6,6 @@ app = Flask(__name__,
             template_folder='app/templates',
             static_folder='app/static')
 
-# Add MIME type for JavaScript modules
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable cache during development
 @app.after_request
 def add_header(response):
     if 'text/javascript' in response.headers.get('Content-Type', ''):
