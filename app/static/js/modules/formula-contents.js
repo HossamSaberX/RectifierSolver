@@ -440,49 +440,91 @@ export function getFormulaContent(formulaType) {
         'continuity-check': `
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5>Uncontrolled RLE Continuity Check</h5>
+                    <h5>${document.getElementById('controlled').checked ? 'Controlled' : 'Uncontrolled'} Full-Wave RLE Continuity Check</h5>
                     <p>Determines if the load current is continuous or discontinuous based on the extinction angle (β).</p>
                     
                     <div class="mb-3">
                         <h6>Conditions:</h6>
                         <ul>
-                            <li><strong>Discontinuous Conduction:</strong> If $ \\beta < \\pi $</li>
-                            <li><strong>Continuous Conduction:</strong> If $ \\beta > \\pi $</li>
+                            ${document.getElementById('controlled').checked ? 
+                                `<li><strong>Discontinuous Conduction:</strong> If $ \\beta < \\pi + \\alpha $</li>
+                                <li><strong>Continuous Conduction:</strong> If $ \\beta > \\pi + \\alpha $</li>` :
+                                `<li><strong>Discontinuous Conduction:</strong> If $ \\beta < \\pi $</li>
+                                <li><strong>Continuous Conduction:</strong> If $ \\beta > \\pi $</li>`
+                            }
                         </ul>
-                        <p>Current Status: <strong>${r.parameters.beta > Math.PI ? 'Continuous ($ \\beta > \\pi $)' : 'Discontinuous ($ \\beta < \\pi $)'}</strong></p>
+                        <p>Current Status: <strong>${
+                            document.getElementById('controlled').checked ? 
+                                (r.parameters.beta > (Math.PI + r.parameters.alpha) ? 
+                                    'Continuous ($ \\beta > \\pi + \\alpha $)' : 
+                                    'Discontinuous ($ \\beta < \\pi + \\alpha $)') :
+                                (r.parameters.beta > Math.PI ? 
+                                    'Continuous ($ \\beta > \\pi $)' : 
+                                    'Discontinuous ($ \\beta < \\pi $)')
+                        }</strong></p>
                     </div>
 
-                    ${r.parameters.beta < Math.PI ? `
-                    <div class="mb-3">
-                        <h6>Analysis for Discontinuous Conduction ($ \\beta < \\pi $):</h6>
-                        <p>The analysis is the same as for the <strong>Uncontrolled Half-Wave RLE Rectifier</strong>, but the period is considered $ \\pi $ instead of $ 2\\pi $ for calculating average and RMS values.</p>
-                        <p>For example, the average current would be:</p>
-                        <p>$$I_{avg} = \\frac{1}{\\pi} \\int_{\\alpha}^{\\beta} i(\\omega t) \\, d(\\omega t)$$</p>
-                    </div>
-                    ` : `
-                    <div class="mb-3">
-                        <h6>Analysis for Continuous Conduction ($ \\beta > \\pi $):</h6>
-                        <p>For continuous conduction, the Fourier chain approach is used where the output current consists of:</p>
-                        <ul>
-                            <li>A DC component: $I_{avg} = \\frac{V_{avg} - V_{dc}}{R}$ where $V_{avg} = \\frac{2V_m}{\\pi}$</li>
-                            <li>AC components (even harmonics only): 2, 4, 6, etc.</li>
-                        </ul>
-                        <p>The voltage harmonics are calculated as:</p>
-                        <p>$$V_n = \\frac{2V_m}{\\pi} \\left(\\frac{1}{n-1} - \\frac{1}{n+1}\\right), \\text{ for } n = 2, 4, 6, ...$$</p>
-                        
-                        <p>The current at any instant is given by:</p>
-                        <p>$$i(\\omega t) = I_{avg} + \\sum_{n=2,4,6,...} \\frac{V_n}{Z_n} \\cos(n\\omega t + \\pi - \\theta_n)$$</p>
-                        
-                        <p>Where:</p>
-                        <ul>
-                            <li>$Z_n = \\sqrt{R^2 + (n\\omega L)^2}$ is the impedance at the $n^{th}$ harmonic</li>
-                            <li>$\\theta_n = \\arctan(\\frac{n\\omega L}{R})$ is the phase angle at the $n^{th}$ harmonic</li>
-                        </ul>
-                    </div>
-                    `}
+                    ${
+                        document.getElementById('controlled').checked ?
+                            (r.parameters.beta < (Math.PI + r.parameters.alpha) ? `
+                            <div class="mb-3">
+                                <h6>Analysis for Discontinuous Conduction ($ \\beta < \\pi + \\alpha $):</h6>
+                                <p>For the controlled full-wave rectifier in discontinuous mode:</p>
+                                <ul>
+                                    <li>The firing angle $ \\alpha $ is specified by the control circuit (must be $ \\geq \\alpha_{min} = \\arcsin(V_{dc}/V_m) $)</li>
+                                    <li>Current flows from $ \\alpha $ to $ \\beta $ in the first half-cycle</li>
+                                    <li>Current flows from $ \\pi + \\alpha $ to $ \\pi + \\beta $ in the second half-cycle</li>
+                                    <li>The output voltage is $ V_{dc} $ during non-conducting periods</li>
+                                </ul>
+                                <p>For calculating averages and RMS values, the period is $ \\pi $ and the integration is performed over the conducting interval.</p>
+                            </div>
+                            ` : `
+                            <div class="mb-3">
+                                <h6>Analysis for Continuous Conduction ($ \\beta > \\pi + \\alpha $):</h6>
+                                <p>For controlled full-wave rectifier in continuous mode:</p>
+                                <ul>
+                                    <li>The average output voltage is: $ V_{avg} = \\frac{2V_m}{\\pi} \\cos \\alpha $</li>
+                                    <li>The DC current is: $ I_{avg} = \\frac{V_{avg} - V_{dc}}{R} $</li>
+                                    <li>Current flows continuously with harmonics superimposed on the DC component</li>
+                                </ul>
+                                <p>The firing angle $ \\alpha $ directly affects the average output voltage and therefore the DC current component.</p>
+                            </div>
+                            `) : 
+                            (r.parameters.beta < Math.PI ? `
+                            <div class="mb-3">
+                                <h6>Analysis for Discontinuous Conduction ($ \\beta < \\pi $):</h6>
+                                <p>The analysis is the same as for the <strong>Uncontrolled Half-Wave RLE Rectifier</strong>, but the period is considered $ \\pi $ instead of $ 2\\pi $ for calculating average and RMS values.</p>
+                                <p>For example, the average current would be:</p>
+                                <p>$$I_{avg} = \\frac{1}{\\pi} \\int_{\\alpha}^{\\beta} i(\\omega t) \\, d(\\omega t)$$</p>
+                            </div>
+                            ` : `
+                            <div class="mb-3">
+                                <h6>Analysis for Continuous Conduction ($ \\beta > \\pi $):</h6>
+                                <p>For continuous conduction, the Fourier chain approach is used where the output current consists of:</p>
+                                <ul>
+                                    <li>A DC component: $I_{avg} = \\frac{V_{avg} - V_{dc}}{R}$ where $V_{avg} = \\frac{2V_m}{\\pi}$</li>
+                                    <li>AC components (even harmonics only): 2, 4, 6, etc.</li>
+                                </ul>
+                                <p>The voltage harmonics are calculated as:</p>
+                                <p>$$V_n = \\frac{2V_m}{\\pi} \\left(\\frac{1}{n-1} - \\frac{1}{n+1}\\right), \\text{ for } n = 2, 4, 6, ...$$</p>
+                                
+                                <p>The current at any instant is given by:</p>
+                                <p>$$i(\\omega t) = I_{avg} + \\sum_{n=2,4,6,...} \\frac{V_n}{Z_n} \\cos(n\\omega t + \\pi - \\theta_n)$$</p>
+                                
+                                <p>Where:</p>
+                                <ul>
+                                    <li>$Z_n = \\sqrt{R^2 + (n\\omega L)^2}$ is the impedance at the $n^{th}$ harmonic</li>
+                                    <li>$\\theta_n = \\arctan(\\frac{n\\omega L}{R})$ is the phase angle at the $n^{th}$ harmonic</li>
+                                </ul>
+                            </div>
+                            `)
+                    }
 
                     <div class="alert alert-info">
                         <p>The continuity of the current significantly affects the calculation of performance metrics like average and RMS values.</p>
+                        ${document.getElementById('controlled').checked ? 
+                            '<p>In controlled rectifiers, adjusting the firing angle allows control of the average output voltage and current.</p>' : 
+                            ''}
                     </div>
                 </div>
             </div>

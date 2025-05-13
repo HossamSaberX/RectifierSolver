@@ -163,8 +163,7 @@ function updateCircuitDiagram() {
     let imageName = '';
     if (isFullWave) {
         if (isControlled) {
-            // Note: FW_ControlledRLE.png may need to be added to the images folder
-            imageName = 'FW_UncontrolledRLE.png'; // Fallback to uncontrolled for now
+            imageName = 'FW_ControlledRLE.png'; // Use the controlled full-wave image
         } else {
             imageName = 'FW_UncontrolledRLE.png';
         }
@@ -312,11 +311,19 @@ function submitFormData() {
  */
 function updateDiscontinuousIndicatorFromResults(data) {
     const fwIndicator = document.getElementById('fw-indicator');
+    const isControlled = document.getElementById('controlled').checked;
     
-    // In a full wave rectifier, if beta < pi, it's discontinuous
-    const beta = data.parameters.beta;
+    // Determine discontinuity condition based on control type
+    let isDiscontinuous;
+    if (isControlled) {
+        // For controlled full-wave: discontinuous if beta < pi + alpha
+        isDiscontinuous = data.parameters.beta < (Math.PI + data.parameters.alpha);
+    } else {
+        // For uncontrolled full-wave: discontinuous if beta < pi
+        isDiscontinuous = data.parameters.beta < Math.PI;
+    }
     
-    if (beta < Math.PI) {
+    if (isDiscontinuous) {
         fwIndicator.innerHTML = '<span class="badge bg-danger">Discontinuous Mode</span>';
     } else {
         fwIndicator.innerHTML = '<span class="badge bg-success">Continuous Mode</span>';

@@ -39,10 +39,20 @@ export function displayResults(data) {
     // Show/hide continuity check row for full-wave rectifiers
     const continuityRow = document.getElementById('continuity-check-row');
     const isFullWave = document.querySelector('input[name="wave_type"]:checked').value === 'full';
+    const isControlled = document.querySelector('input[name="control_type"]:checked').value === 'controlled';
     
     if (isFullWave) {
         continuityRow.style.display = 'table-row';
-        const isContinuous = data.parameters.beta > Math.PI;
+        
+        let isContinuous;
+        if (isControlled) {
+            // For controlled full-wave: continuous if β > π + α
+            isContinuous = data.parameters.beta > (Math.PI + data.parameters.alpha);
+        } else {
+            // For uncontrolled full-wave: continuous if β > π
+            isContinuous = data.parameters.beta > Math.PI;
+        }
+        
         const status = isContinuous ? 'Continuous' : 'Discontinuous';
         document.getElementById('continuity-status').textContent = status;
         
