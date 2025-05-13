@@ -37,7 +37,7 @@
                             <div class="mb-3" id="firing-angle-container" style="display: none;">
                                 <label for="firing_angle" class="form-label">Firing Angle (α)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="firing_angle" name="firing_angle" value="0.5" step="0.01" min="0" max="3.14159" required>
+                                    <input type="number" class="form-control" id="firing_angle" name="firing_angle" value="0.5" step="0.0001" min="0" max="3.14159" required>
                                     <span class="input-group-text">rad</span>
                                 </div>
                                 <small class="text-muted">Must be ≥ minimum firing angle (arcsin(Vdc/Vm))</small>
@@ -96,7 +96,7 @@
                             <div class="mb-3">
                                 <label for="R" class="form-label">Resistance (R)</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="R" name="R" value="10" step="0.01" required>
+                                    <input type="number" class="form-control" id="R" name="R" value="10" step="0.001" required>
                                     <span class="input-group-text">Ω</span>
                                 </div>
                             </div>
