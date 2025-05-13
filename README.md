@@ -117,11 +117,7 @@ If you encounter issues with dependencies or running the server, it's highly rec
 Contributions are welcomed and needed to expand the capabilities of RectifierSolver! 
 The project particularly needs:
 
-### High Priority Additions
-1. **Full Wave Rectifier Implementations**:
-   - Controlled Full Wave with RLE load
-
-2. **Three Phase Rectifier Implementations**:
+**Three Phase Rectifier Implementations**:
    - Three Phase Half Wave (controlled and uncontrolled)
    - Three Phase Full Wave (controlled and uncontrolled)
 
