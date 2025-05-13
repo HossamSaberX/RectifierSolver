@@ -85,7 +85,6 @@ Current equation and all other calculations remain identical to uncontrolled cir
   - Follow the same logic exactly as half wave
 
 - For continuous state:
-  - No waveforms to generate
   - Vo equals 2Vm/pi cosine alpha
   - Io = (Vo-Vdc)/R
 
