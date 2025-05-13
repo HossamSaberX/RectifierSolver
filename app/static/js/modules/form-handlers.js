@@ -101,6 +101,8 @@ function setupWaveTypeChangeHandler() {
         // If full-wave is selected and FWD was checked, switch to RLE
         if (isFullWave && fwdOption.checked) {
             rleOption.checked = true;
+            // Manually trigger the circuit type change handler to update control options
+            rleOption.dispatchEvent(new Event('change'));
         }
         
         // Update the message explaining the constraint
