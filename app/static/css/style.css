@@ -7,7 +7,7 @@ body {
     height: 400px;
     width: 100%;
     padding: 20px 0;
-    overflow: hidden;
+    overflow: auto; /* Enable both horizontal and vertical scrolling */
     margin-bottom: 15px;
 }
 
@@ -62,6 +62,22 @@ body {
 @media (max-width: 768px) {
     .chart-container {
         height: 300px;
+    }
+}
+
+/* Chart scroll indicator */
+.chart-scroll-indicator {
+    display: none;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+/* Show scroll indicator only on small screens */
+@media (max-width: 768px) {
+    .chart-scroll-indicator {
+        display: block;
     }
 }
 
