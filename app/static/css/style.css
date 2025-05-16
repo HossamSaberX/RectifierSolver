@@ -7,11 +7,18 @@ body {
     height: 400px;
     width: 100%;
     padding: 20px 0;
+    overflow: hidden;
+    margin-bottom: 15px;
 }
 
 .card {
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 1.25rem;
+    overflow: hidden;
 }
 
 .card-header {
@@ -57,3 +64,13 @@ body {
         height: 300px;
     }
 }
+
+.tab-content {
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.tab-pane {
+    width: 100%;
+    height: 100%;
+}   
