@@ -3,6 +3,45 @@
  */
 
 /**
+ * Generate base layout configuration for Plotly charts
+ * @param {string} title - The chart title
+ * @param {string} yAxisTitle - The y-axis title
+ * @param {Array} piMarkers - Array of pi marker shapes
+ * @param {Array} piAnnotations - Array of pi annotations
+ * @param {boolean} showLegend - Whether to show the legend
+ * @returns {Object} The base layout configuration
+ */
+function generateBaseLayout(title, yAxisTitle, piMarkers, piAnnotations, showLegend = false) {
+    const layout = {
+        title: title,
+        xaxis: {
+            title: 'Angular Position (rad)',
+            range: [0, 2*Math.PI],
+            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
+            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
+        },
+        yaxis: {
+            title: yAxisTitle
+        },
+        margin: { t: 40, r: 30, l: 60, b: 40 },
+        hovermode: 'closest',
+        shapes: piMarkers,
+        annotations: piAnnotations
+    };
+
+    if (showLegend) {
+        layout.legend = {
+            x: 0.01,
+            y: 0.99,
+            traceorder: 'normal',
+            bgcolor: 'rgba(255,255,255,0.6)'
+        };
+    }
+
+    return layout;
+}
+
+/**
  * Plot waveforms based on calculation results
  * @param {Object} waveforms - The waveform data from calculation results
  */
@@ -119,22 +158,12 @@ function plotSourceVoltage(time, vs, piMarkers, piAnnotations) {
         }
     };
     
-    const vsLayout = {
-        title: 'Source Voltage vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const vsLayout = generateBaseLayout(
+        'Source Voltage vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('vs-chart', [vsTrace], vsLayout);
 }
@@ -154,22 +183,12 @@ function plotOutputVoltage(time, vo, piMarkers, piAnnotations) {
         }
     };
     
-    const voLayout = {
-        title: 'Output Voltage vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const voLayout = generateBaseLayout(
+        'Output Voltage vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('vo-chart', [voTrace], voLayout);
 }
@@ -189,22 +208,12 @@ function plotDiodeVoltage(time, vd, piMarkers, piAnnotations) {
         }
     };
     
-    const vdLayout = {
-        title: 'Diode Voltage vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const vdLayout = generateBaseLayout(
+        'Diode Voltage vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('vd-chart', [vdTrace], vdLayout);
 }
@@ -236,28 +245,13 @@ function plotDiodeVoltages(time, vd_main, vd_fw, piMarkers, piAnnotations) {
         }
     };
     
-    const vdLayout = {
-        title: 'Diode Voltages vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations,
-        legend: {
-            x: 0.01,
-            y: 0.99,
-            traceorder: 'normal',
-            bgcolor: 'rgba(255,255,255,0.6)'
-        }
-    };
+    const vdLayout = generateBaseLayout(
+        'Diode Voltages vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations,
+        true
+    );
     
     Plotly.newPlot('vd-chart', [vdMainTrace, vdFwTrace], vdLayout);
 }
@@ -301,28 +295,13 @@ function plotCurrents(time, i_out, i_source, i_fw, piMarkers, piAnnotations) {
         }
     };
     
-    const iLayout = {
-        title: 'Currents vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Current (A)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations,
-        legend: {
-            x: 0.01,
-            y: 0.99,
-            traceorder: 'normal',
-            bgcolor: 'rgba(255,255,255,0.6)'
-        }
-    };
+    const iLayout = generateBaseLayout(
+        'Currents vs. Angular Position (ωt)',
+        'Current (A)',
+        piMarkers,
+        piAnnotations,
+        true
+    );
     
     Plotly.newPlot('i-chart', [iOutTrace, iSourceTrace, iFwTrace], iLayout);
 }
@@ -342,22 +321,12 @@ function plotOutputCurrent(time, i_out, piMarkers, piAnnotations) {
         }
     };
     
-    const iLayout = {
-        title: 'Output Current vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Current (A)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const iLayout = generateBaseLayout(
+        'Output Current vs. Angular Position (ωt)',
+        'Current (A)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('i-chart', [iTrace], iLayout);
 }
@@ -377,22 +346,12 @@ function plotInductorVoltage(time, vl, piMarkers, piAnnotations) {
         }
     };
     
-    const vlLayout = {
-        title: 'Inductor Voltage vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const vlLayout = generateBaseLayout(
+        'Inductor Voltage vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('vl-chart', [vlTrace], vlLayout);
 }
@@ -412,22 +371,12 @@ function plotResistorVoltage(time, vr, piMarkers, piAnnotations) {
         }
     };
     
-    const vrLayout = {
-        title: 'Resistor Voltage vs. Angular Position (ωt)',
-        xaxis: {
-            title: 'Angular Position (rad)',
-            range: [0, 2*Math.PI],
-            tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI],
-            ticktext: ['0', 'π/2', 'π', '3π/2', '2π']
-        },
-        yaxis: {
-            title: 'Voltage (V)'
-        },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
-    };
+    const vrLayout = generateBaseLayout(
+        'Resistor Voltage vs. Angular Position (ωt)',
+        'Voltage (V)',
+        piMarkers,
+        piAnnotations
+    );
     
     Plotly.newPlot('vr-chart', [vrTrace], vrLayout);
 }
@@ -443,14 +392,16 @@ function plotFullWaveCurrents(time, i_out, id1, id2, id3, id4) {
         { x: time, y: id3, mode: 'lines', name: 'Diode 3 Current', line: { color: 'rgb(255,127,14)', width: 1, dash: 'dot' } },
         { x: time, y: id4, mode: 'lines', name: 'Diode 4 Current', line: { color: 'rgb(148,103,189)', width: 1, dash: 'dot' } }
     ];
-    Plotly.newPlot('i-chart', traces, {
-        title: 'Currents vs. Angular Position (ωt)',
-        xaxis: { title: 'Angular Position (rad)', range: [0, 2*Math.PI], tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI], ticktext: ['0', 'π/2', 'π', '3π/2', '2π'] },
-        yaxis: { title: 'Current (A)' },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        legend: { x: 0.01, y: 0.99, traceorder: 'normal', bgcolor: 'rgba(255,255,255,0.6)' }
-    });
+    
+    const layout = generateBaseLayout(
+        'Currents vs. Angular Position (ωt)',
+        'Current (A)',
+        [], // No pi markers for full wave
+        [], // No pi annotations for full wave
+        true
+    );
+    
+    Plotly.newPlot('i-chart', traces, layout);
 }
 
 /**
@@ -463,12 +414,14 @@ function plotFullWaveDiodeVoltages(time, vd1, vd2, vd3, vd4) {
         { x: time, y: vd3, mode: 'lines', name: 'Diode 3 Voltage', line: { color: 'rgb(255,127,14)', width: 1 } },
         { x: time, y: vd4, mode: 'lines', name: 'Diode 4 Voltage', line: { color: 'rgb(148,103,189)', width: 1 } }
     ];
-    Plotly.newPlot('vd-chart', traces, {
-        title: 'Diode Voltages vs. Angular Position (ωt)',
-        xaxis: { title: 'Angular Position (rad)', range: [0, 2*Math.PI], tickvals: [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI], ticktext: ['0', 'π/2', 'π', '3π/2', '2π'] },
-        yaxis: { title: 'Voltage (V)' },
-        margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        legend: { x: 0.01, y: 0.99, traceorder: 'normal', bgcolor: 'rgba(255,255,255,0.6)' }
-    });
+    
+    const layout = generateBaseLayout(
+        'Diode Voltages vs. Angular Position (ωt)',
+        'Voltage (V)',
+        [], // No pi markers for full wave
+        [], // No pi annotations for full wave
+        true
+    );
+    
+    Plotly.newPlot('vd-chart', traces, layout);
 }
