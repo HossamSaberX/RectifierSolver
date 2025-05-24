@@ -13,6 +13,9 @@ export let circuitResults = {};
 export function setupFormHandlers() {
     const circuitForm = document.getElementById('circuit-form');
     
+    // Load URL parameters on page load
+    loadParametersFromURL();
+    
     // Add submit event listener
     circuitForm.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -37,6 +40,106 @@ export function setupFormHandlers() {
     
     // Update circuit diagram initially
     updateCircuitDiagram();
+}
+
+/**
+ * Load parameters from URL query string and populate form
+ */
+function loadParametersFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Map of URL parameter names to form element IDs
+    const paramMap = {
+        'control_type': 'control_type',
+        'wave_type': 'wave_type', 
+        'circuit_type': 'circuit_type',
+        'Vrms': 'Vrms',
+        'f': 'f',
+        'R': 'R',
+        'L': 'L',
+        'Vdc': 'Vdc',
+        'firing_angle': 'firing_angle'
+    };
+    
+    // Check if any parameters exist in URL
+    let hasParams = false;
+    
+    // Load parameters into form
+    for (const [urlParam, formId] of Object.entries(paramMap)) {
+        const value = urlParams.get(urlParam);
+        if (value !== null) {
+            hasParams = true;
+            if (formId === 'control_type' || formId === 'wave_type' || formId === 'circuit_type') {
+                // Handle radio buttons
+                const radio = document.querySelector(`input[name="${formId}"][value="${value}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    // Trigger change event to update UI
+                    radio.dispatchEvent(new Event('change'));
+                }
+            } else {
+                // Handle text inputs
+                const input = document.getElementById(formId);
+                if (input) {
+                    input.value = value;
+                }
+            }
+        }
+    }
+    
+    // Update UI after loading parameters
+    updateCircuitDiagram();
+    
+    // If parameters were loaded from URL, auto-submit the form after a short delay
+    if (hasParams) {
+        // Show loading immediately to indicate something is happening
+        document.getElementById('no-results').classList.add('d-none');
+        document.getElementById('loading').classList.remove('d-none');
+        
+        // Auto-submit after a short delay to ensure all UI updates are complete
+        setTimeout(() => {
+            submitFormData();
+        }, 300); // Short delay to ensure form is fully populated
+    }
+}
+
+/**
+ * Update URL with current form parameters
+ */
+function updateURLWithParameters() {
+    const params = new URLSearchParams();
+    
+    // Add form parameters to URL
+    const controlType = document.querySelector('input[name="control_type"]:checked')?.value;
+    const waveType = document.querySelector('input[name="wave_type"]:checked')?.value;
+    const circuitType = document.querySelector('input[name="circuit_type"]:checked')?.value;
+    
+    if (controlType) params.set('control_type', controlType);
+    if (waveType) params.set('wave_type', waveType);
+    if (circuitType) params.set('circuit_type', circuitType);
+    
+    // Add numeric parameters
+    const Vrms = document.getElementById('Vrms').value;
+    const f = document.getElementById('f').value;
+    const R = document.getElementById('R').value;
+    const L = document.getElementById('L').value;
+    const Vdc = document.getElementById('Vdc').value;
+    
+    if (Vrms) params.set('Vrms', Vrms);
+    if (f) params.set('f', f);
+    if (R) params.set('R', R);
+    if (L) params.set('L', L);
+    if (Vdc && circuitType !== 'fwd') params.set('Vdc', Vdc);
+    
+    // Add firing angle if controlled
+    if (controlType === 'controlled') {
+        const firingAngle = document.getElementById('firing_angle').value;
+        if (firingAngle) params.set('firing_angle', firingAngle);
+    }
+    
+    // Update URL without reloading the page
+    const newURL = window.location.pathname + '?' + params.toString();
+    window.history.pushState({}, '', newURL);
 }
 
 /**
@@ -227,6 +330,9 @@ function updateDiscontinuousIndicator() {
  * Collect form data and submit to the API
  */
 function submitFormData() {
+    // Update URL with current parameters
+    updateURLWithParameters();
+    
     // Collect form data
     const Vrms = parseFloat(document.getElementById('Vrms').value);
     // Convert RMS to peak (Vm = Vrms * sqrt(2))
@@ -331,3 +437,89 @@ function updateDiscontinuousIndicatorFromResults(data) {
         fwIndicator.innerHTML = '<span class="badge bg-success">Continuous Mode</span>';
     }
 }
+
+/**
+ * Copy the current shareable link to clipboard
+ */
+function copyShareableLink() {
+    // Update URL with current parameters first
+    updateURLWithParameters();
+    
+    // Copy current URL to clipboard
+    const currentURL = window.location.href;
+    
+    navigator.clipboard.writeText(currentURL).then(() => {
+        // Show success message
+        const btn = document.getElementById('copy-link-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+        btn.classList.remove('btn-outline-secondary');
+        btn.classList.add('btn-success');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy link: ', err);
+        // Fallback: show URL in alert
+        alert('Copy this link: ' + currentURL);
+    });
+}
+
+/**
+ * Reset form to default values and clear everything
+ */
+function resetForm() {
+    // Reset all form inputs to their default values
+    const form = document.getElementById('circuit-form');
+    
+    // Reset radio buttons to defaults
+    document.getElementById('uncontrolled').checked = true;
+    document.getElementById('half-wave').checked = true;
+    document.getElementById('rle-config').checked = true;
+    
+    // Reset numeric inputs to defaults
+    document.getElementById('Vrms').value = '70.71';
+    document.getElementById('f').value = '50';
+    document.getElementById('R').value = '10';
+    document.getElementById('L').value = '0.01';
+    document.getElementById('Vdc').value = '20';
+    document.getElementById('firing_angle').value = '0.5';
+    
+    // Trigger change events to update UI
+    document.getElementById('uncontrolled').dispatchEvent(new Event('change'));
+    document.getElementById('half-wave').dispatchEvent(new Event('change'));
+    document.getElementById('rle-config').dispatchEvent(new Event('change'));
+    
+    // Hide results and show no-results state
+    document.getElementById('results').classList.add('d-none');
+    document.getElementById('loading').classList.add('d-none');
+    document.getElementById('no-results').classList.remove('d-none');
+    
+    // Clear URL parameters
+    window.history.pushState({}, '', window.location.pathname);
+    
+    // Update circuit diagram to default
+    updateCircuitDiagram();
+    
+    // Show success feedback on reset button
+    const btn = document.getElementById('reset-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check-circle"></i> Reset!';
+    btn.classList.remove('btn-outline-danger');
+    btn.classList.add('btn-success');
+    
+    // Reset button after 1.5 seconds
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-danger');
+    }, 1500);
+}
+
+// Make the functions globally available
+window.copyShareableLink = copyShareableLink;
+window.resetForm = resetForm;
