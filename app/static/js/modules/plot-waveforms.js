@@ -6,12 +6,10 @@
  * Generate base layout configuration for Plotly charts
  * @param {string} title - The chart title
  * @param {string} yAxisTitle - The y-axis title
- * @param {Array} piMarkers - Array of pi marker shapes
- * @param {Array} piAnnotations - Array of pi annotations
  * @param {boolean} showLegend - Whether to show the legend
  * @returns {Object} The base layout configuration
  */
-function generateBaseLayout(title, yAxisTitle, piMarkers, piAnnotations, showLegend = false) {
+function generateBaseLayout(title, yAxisTitle, showLegend = false) {
     const layout = {
         title: title,
         xaxis: {
@@ -24,9 +22,7 @@ function generateBaseLayout(title, yAxisTitle, piMarkers, piAnnotations, showLeg
             title: yAxisTitle
         },
         margin: { t: 40, r: 30, l: 60, b: 40 },
-        hovermode: 'closest',
-        shapes: piMarkers,
-        annotations: piAnnotations
+        hovermode: 'closest'
     };
 
     if (showLegend) {
@@ -49,104 +45,52 @@ export function plotWaveforms(waveforms) {
     // Keep time in radians - no conversion needed
     const time = waveforms.time;
     
-    // Create shapes array for pi and 2pi markings
-    const piMarkers = [
-        // π line
-        {
-            type: 'line',
-            x0: Math.PI,
-            y0: -1.5, // Extended below to make it visible
-            x1: Math.PI,
-            y1: 1.5,  // Extended above to make it visible
-            line: {
-                color: 'rgba(200, 0, 0, 0.5)',
-                width: 1,
-                dash: 'dash'
-            }
-        },
-        // 2π line
-        {
-            type: 'line',
-            x0: 2 * Math.PI,
-            y0: -1.5,
-            x1: 2 * Math.PI,
-            y1: 1.5,
-            line: {
-                color: 'rgba(200, 0, 0, 0.5)',
-                width: 1,
-                dash: 'dash'
-            }
-        }
-    ];
-    
-    // π annotation
-    const piAnnotations = [
-        {
-            x: Math.PI,
-            y: 1.3,
-            text: 'π',
-            showarrow: false,
-            font: {
-                size: 16
-            }
-        },
-        {
-            x: 2 * Math.PI,
-            y: 1.3,
-            text: '2π',
-            showarrow: false,
-            font: {
-                size: 16
-            }
-        }
-    ];
-    
     // Create all the plots
-    plotSourceVoltage(time, waveforms.vs, piMarkers, piAnnotations);
-    plotOutputVoltage(time, waveforms.vo, piMarkers, piAnnotations);
+    plotSourceVoltage(time, waveforms.vs);
+    plotOutputVoltage(time, waveforms.vo);
     
     // Check if this is a freewheeling diode circuit (has vd_fw data)
     if (waveforms.vd_fw) {
-        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw, piMarkers, piAnnotations);
+        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw);
         
         // For FWD circuit, also plot source and freewheeling currents 
         if (waveforms.i_source && waveforms.i_fw) {
-            plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw, piMarkers, piAnnotations);
+            plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw);
         } else {
-            plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+            plotOutputCurrent(time, waveforms.i_out);
         }
     } else {
         // Standard diode voltage plot for non-FWD circuits
-        plotDiodeVoltage(time, waveforms.vd, piMarkers, piAnnotations);
-        plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+        plotDiodeVoltage(time, waveforms.vd);
+        plotOutputCurrent(time, waveforms.i_out);
     }
     
     // Full-wave special handling
     if (waveforms.id1 && waveforms.id2) {
         plotFullWaveCurrents(time, waveforms.i_out, waveforms.id1, waveforms.id2, waveforms.id3, waveforms.id4);
     } else if (waveforms.i_source && waveforms.i_fw) {
-        plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw, piMarkers, piAnnotations);
+        plotCurrents(time, waveforms.i_out, waveforms.i_source, waveforms.i_fw);
     } else {
-        plotOutputCurrent(time, waveforms.i_out, piMarkers, piAnnotations);
+        plotOutputCurrent(time, waveforms.i_out);
     }
     
     // Diode voltages for full wave
     if (waveforms.vd1 && waveforms.vd2) {
         plotFullWaveDiodeVoltages(time, waveforms.vd1, waveforms.vd2, waveforms.vd3, waveforms.vd4);
     } else if (waveforms.vd_fw) {
-        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw, piMarkers, piAnnotations);
+        plotDiodeVoltages(time, waveforms.vd, waveforms.vd_fw);
     } else {
-        plotDiodeVoltage(time, waveforms.vd, piMarkers, piAnnotations);
+        plotDiodeVoltage(time, waveforms.vd);
     }
     
-    plotInductorVoltage(time, waveforms.vl, piMarkers, piAnnotations);
-    plotResistorVoltage(time, waveforms.vr, piMarkers, piAnnotations);
+    plotInductorVoltage(time, waveforms.vl);
+    plotResistorVoltage(time, waveforms.vr);
 }
 
 /**
  * Plot source voltage waveform
  */
-function plotSourceVoltage(time, vs, piMarkers, piAnnotations) {
+function plotSourceVoltage(time, vs) {
     const vsTrace = {
         x: time,
         y: vs,
@@ -160,9 +104,7 @@ function plotSourceVoltage(time, vs, piMarkers, piAnnotations) {
     
     const vsLayout = generateBaseLayout(
         'Source Voltage vs. Angular Position (ωt)',
-        'Voltage (V)',
-        piMarkers,
-        piAnnotations
+        'Voltage (V)'
     );
     
     Plotly.newPlot('vs-chart', [vsTrace], vsLayout);
@@ -171,7 +113,7 @@ function plotSourceVoltage(time, vs, piMarkers, piAnnotations) {
 /**
  * Plot output voltage waveform
  */
-function plotOutputVoltage(time, vo, piMarkers, piAnnotations) {
+function plotOutputVoltage(time, vo) {
     const voTrace = {
         x: time,
         y: vo,
@@ -185,9 +127,7 @@ function plotOutputVoltage(time, vo, piMarkers, piAnnotations) {
     
     const voLayout = generateBaseLayout(
         'Output Voltage vs. Angular Position (ωt)',
-        'Voltage (V)',
-        piMarkers,
-        piAnnotations
+        'Voltage (V)'
     );
     
     Plotly.newPlot('vo-chart', [voTrace], voLayout);
@@ -196,7 +136,7 @@ function plotOutputVoltage(time, vo, piMarkers, piAnnotations) {
 /**
  * Plot diode voltage waveform
  */
-function plotDiodeVoltage(time, vd, piMarkers, piAnnotations) {
+function plotDiodeVoltage(time, vd) {
     const vdTrace = {
         x: time,
         y: vd,
@@ -210,9 +150,7 @@ function plotDiodeVoltage(time, vd, piMarkers, piAnnotations) {
     
     const vdLayout = generateBaseLayout(
         'Diode Voltage vs. Angular Position (ωt)',
-        'Voltage (V)',
-        piMarkers,
-        piAnnotations
+        'Voltage (V)'
     );
     
     Plotly.newPlot('vd-chart', [vdTrace], vdLayout);
@@ -221,7 +159,7 @@ function plotDiodeVoltage(time, vd, piMarkers, piAnnotations) {
 /**
  * Plot both diode voltages for freewheeling diode circuit
  */
-function plotDiodeVoltages(time, vd_main, vd_fw, piMarkers, piAnnotations) {
+function plotDiodeVoltages(time, vd_main, vd_fw) {
     const vdMainTrace = {
         x: time,
         y: vd_main,
@@ -248,8 +186,6 @@ function plotDiodeVoltages(time, vd_main, vd_fw, piMarkers, piAnnotations) {
     const vdLayout = generateBaseLayout(
         'Diode Voltages vs. Angular Position (ωt)',
         'Voltage (V)',
-        piMarkers,
-        piAnnotations,
         true
     );
     
@@ -259,7 +195,7 @@ function plotDiodeVoltages(time, vd_main, vd_fw, piMarkers, piAnnotations) {
 /**
  * Plot all currents for freewheeling diode circuit
  */
-function plotCurrents(time, i_out, i_source, i_fw, piMarkers, piAnnotations) {
+function plotCurrents(time, i_out, i_source, i_fw) {
     const iOutTrace = {
         x: time,
         y: i_out,
@@ -298,8 +234,6 @@ function plotCurrents(time, i_out, i_source, i_fw, piMarkers, piAnnotations) {
     const iLayout = generateBaseLayout(
         'Currents vs. Angular Position (ωt)',
         'Current (A)',
-        piMarkers,
-        piAnnotations,
         true
     );
     
@@ -309,7 +243,7 @@ function plotCurrents(time, i_out, i_source, i_fw, piMarkers, piAnnotations) {
 /**
  * Plot output current waveform
  */
-function plotOutputCurrent(time, i_out, piMarkers, piAnnotations) {
+function plotOutputCurrent(time, i_out) {
     const iTrace = {
         x: time,
         y: i_out,
@@ -323,9 +257,7 @@ function plotOutputCurrent(time, i_out, piMarkers, piAnnotations) {
     
     const iLayout = generateBaseLayout(
         'Output Current vs. Angular Position (ωt)',
-        'Current (A)',
-        piMarkers,
-        piAnnotations
+        'Current (A)'
     );
     
     Plotly.newPlot('i-chart', [iTrace], iLayout);
@@ -334,7 +266,7 @@ function plotOutputCurrent(time, i_out, piMarkers, piAnnotations) {
 /**
  * Plot inductor voltage waveform
  */
-function plotInductorVoltage(time, vl, piMarkers, piAnnotations) {
+function plotInductorVoltage(time, vl) {
     const vlTrace = {
         x: time,
         y: vl,
@@ -348,9 +280,7 @@ function plotInductorVoltage(time, vl, piMarkers, piAnnotations) {
     
     const vlLayout = generateBaseLayout(
         'Inductor Voltage vs. Angular Position (ωt)',
-        'Voltage (V)',
-        piMarkers,
-        piAnnotations
+        'Voltage (V)'
     );
     
     Plotly.newPlot('vl-chart', [vlTrace], vlLayout);
@@ -359,7 +289,7 @@ function plotInductorVoltage(time, vl, piMarkers, piAnnotations) {
 /**
  * Plot resistor voltage waveform
  */
-function plotResistorVoltage(time, vr, piMarkers, piAnnotations) {
+function plotResistorVoltage(time, vr) {
     const vrTrace = {
         x: time,
         y: vr,
@@ -373,9 +303,7 @@ function plotResistorVoltage(time, vr, piMarkers, piAnnotations) {
     
     const vrLayout = generateBaseLayout(
         'Resistor Voltage vs. Angular Position (ωt)',
-        'Voltage (V)',
-        piMarkers,
-        piAnnotations
+        'Voltage (V)'
     );
     
     Plotly.newPlot('vr-chart', [vrTrace], vrLayout);
@@ -396,8 +324,6 @@ function plotFullWaveCurrents(time, i_out, id1, id2, id3, id4) {
     const layout = generateBaseLayout(
         'Currents vs. Angular Position (ωt)',
         'Current (A)',
-        [], // No pi markers for full wave
-        [], // No pi annotations for full wave
         true
     );
     
@@ -418,8 +344,6 @@ function plotFullWaveDiodeVoltages(time, vd1, vd2, vd3, vd4) {
     const layout = generateBaseLayout(
         'Diode Voltages vs. Angular Position (ωt)',
         'Voltage (V)',
-        [], // No pi markers for full wave
-        [], // No pi annotations for full wave
         true
     );
     
