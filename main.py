@@ -58,4 +58,4 @@ def solve():
         return jsonify({'error': 'Circuit type not implemented yet'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
