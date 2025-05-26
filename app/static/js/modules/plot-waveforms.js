@@ -11,7 +11,6 @@
  */
 function generateBaseLayout(title, yAxisTitle, showLegend = false) {
     const layout = {
-        title: title,
         xaxis: {
             title: 'Angular Position (rad)',
             range: [0, 2*Math.PI],
@@ -87,6 +86,19 @@ export function plotWaveforms(waveforms) {
     plotResistorVoltage(time, waveforms.vr);
 }
 
+function setPlotTitle(chartId, titleText) {
+    const chartDiv = document.getElementById(chartId);
+    if (chartDiv) {
+        let titleDiv = chartDiv.previousElementSibling;
+        if (!titleDiv || !titleDiv.classList.contains('plot-title')) {
+            titleDiv = document.createElement('div');
+            titleDiv.className = 'plot-title';
+            chartDiv.parentNode.insertBefore(titleDiv, chartDiv);
+        }
+        titleDiv.textContent = titleText;
+    }
+}
+
 /**
  * Plot source voltage waveform
  */
@@ -107,6 +119,7 @@ function plotSourceVoltage(time, vs) {
         'Voltage (V)'
     );
     
+    setPlotTitle('vs-chart', 'Source Voltage vs. Angular Position (ωt)');
     Plotly.newPlot('vs-chart', [vsTrace], vsLayout);
 }
 
@@ -130,6 +143,7 @@ function plotOutputVoltage(time, vo) {
         'Voltage (V)'
     );
     
+    setPlotTitle('vo-chart', 'Output Voltage vs. Angular Position (ωt)');
     Plotly.newPlot('vo-chart', [voTrace], voLayout);
 }
 
@@ -153,6 +167,7 @@ function plotDiodeVoltage(time, vd) {
         'Voltage (V)'
     );
     
+    setPlotTitle('vd-chart', 'Diode Voltage vs. Angular Position (ωt)');
     Plotly.newPlot('vd-chart', [vdTrace], vdLayout);
 }
 
@@ -189,6 +204,7 @@ function plotDiodeVoltages(time, vd_main, vd_fw) {
         true
     );
     
+    setPlotTitle('vd-chart', 'Diode Voltages vs. Angular Position (ωt)');
     Plotly.newPlot('vd-chart', [vdMainTrace, vdFwTrace], vdLayout);
 }
 
@@ -237,6 +253,7 @@ function plotCurrents(time, i_out, i_source, i_fw) {
         true
     );
     
+    setPlotTitle('i-chart', 'Currents vs. Angular Position (ωt)');
     Plotly.newPlot('i-chart', [iOutTrace, iSourceTrace, iFwTrace], iLayout);
 }
 
@@ -260,6 +277,7 @@ function plotOutputCurrent(time, i_out) {
         'Current (A)'
     );
     
+    setPlotTitle('i-chart', 'Output Current vs. Angular Position (ωt)');
     Plotly.newPlot('i-chart', [iTrace], iLayout);
 }
 
@@ -283,6 +301,7 @@ function plotInductorVoltage(time, vl) {
         'Voltage (V)'
     );
     
+    setPlotTitle('vl-chart', 'Inductor Voltage vs. Angular Position (ωt)');
     Plotly.newPlot('vl-chart', [vlTrace], vlLayout);
 }
 
@@ -306,6 +325,7 @@ function plotResistorVoltage(time, vr) {
         'Voltage (V)'
     );
     
+    setPlotTitle('vr-chart', 'Resistor Voltage vs. Angular Position (ωt)');
     Plotly.newPlot('vr-chart', [vrTrace], vrLayout);
 }
 
@@ -327,6 +347,7 @@ function plotFullWaveCurrents(time, i_out, id1, id2, id3, id4) {
         true
     );
     
+    setPlotTitle('i-chart', 'Currents vs. Angular Position (ωt)');
     Plotly.newPlot('i-chart', traces, layout);
 }
 
@@ -347,5 +368,6 @@ function plotFullWaveDiodeVoltages(time, vd1, vd2, vd3, vd4) {
         true
     );
     
+    setPlotTitle('vd-chart', 'Diode Voltages vs. Angular Position (ωt)');
     Plotly.newPlot('vd-chart', traces, layout);
 }

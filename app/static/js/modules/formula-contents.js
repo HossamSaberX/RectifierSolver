@@ -26,13 +26,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        ${isControlled ? 
-                            `<p>For controlled rectifiers, α is specified by the firing circuit, but must be greater than or equal to the minimum angle:</p>
-                            <p>$$\\alpha = \\max(\\alpha_{specified}, \\alpha_{min})$$</p>
-                            <p>Where: $$\\alpha_{min} = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p>` 
-                            : 
-                            `<p>$$\\alpha = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p>`
-                        }
+                        <div class="formula-scroll"><p>$$\\alpha = \\arcsin\\left(\\frac{V_{dc}}{V_m}\\right)$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -47,10 +41,10 @@ export function getFormulaContent(formulaType) {
                     <div class="mb-3">
                         <h6>Calculation:</h6>
                         ${isControlled ? 
-                            `<p>$$\\alpha_{min} = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)}$$ rad</p>
-                            <p>$$\\alpha = \\max(${document.getElementById('firing_angle').value}, ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)}) = ${r.parameters.alpha.toFixed(4)}$$ rad</p>` 
+                            `<p>$$\\alpha_{min} = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)} \\ \\mathrm{rad}$$</p>
+                            <p>$$\\alpha = \\max(${document.getElementById('firing_angle').value}, ${Math.asin(Math.min(1.0, p.Vdc/p.Vm)).toFixed(4)} \\ \\mathrm{rad}) = ${r.parameters.alpha.toFixed(4)} \\ \\mathrm{rad}$$</p>` 
                             :
-                            `<p>$$\\alpha = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${r.parameters.alpha.toFixed(4)}$$ rad</p>`
+                            `<p>$$\\alpha = \\arcsin\\left(\\frac{${p.Vdc}}{${p.Vm.toFixed(2)}}\\right) = ${r.parameters.alpha.toFixed(4)} \\ \\mathrm{rad}$$</p>`
                         }
                     </div>
                     
@@ -72,8 +66,8 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>Found by solving the equation: $$i(\\beta) = 0$$</p>
-                        <p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p>
+                        <div class="formula-scroll"><p>Found by solving the equation: $$i(\\beta) = 0$$</p></div>
+                        <div class="formula-scroll"><p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -91,7 +85,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Solution:</h6>
-                        <p>This equation is solved numerically to find $\\beta = ${r.parameters.beta.toFixed(4)}$ rad</p>
+                        <div class="formula-scroll"><p>This equation is solved numerically to find $\\beta = ${r.parameters.beta.toFixed(4)} \\ \\mathrm{rad}$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
@@ -108,20 +102,20 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$\\text{Conducting Angle} = \\beta - \\alpha$$</p>
+                        <div class="formula-scroll"><p>$$\\text{Conducting Angle} = \\beta - \\alpha$$</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Applied values:</h6>
                         <ul>
-                            <li>$\\alpha = ${r.parameters.alpha.toFixed(4)}$ rad</li>
-                            <li>$\\beta = ${r.parameters.beta.toFixed(4)}$ rad</li>
+                            <li>$\\alpha = ${r.parameters.alpha.toFixed(4)} \\ \\mathrm{rad}$</li>
+                            <li>$\\beta = ${r.parameters.beta.toFixed(4)} \\ \\mathrm{rad}$</li>
                         </ul>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$\\text{Conducting Angle} = ${r.parameters.beta.toFixed(4)} - ${r.parameters.alpha.toFixed(4)} = ${r.parameters.conducting_angle.toFixed(4)}$$ rad</p>
+                        <div class="formula-scroll"><p>$$\\text{Conducting Angle} = ${r.parameters.beta.toFixed(4)} - ${r.parameters.alpha.toFixed(4)} = ${r.parameters.conducting_angle.toFixed(4)} \\ \\mathrm{rad}$$</p></div>
                     </div>
                 </div>
             </div>
@@ -134,22 +128,22 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$\\text{Conducting Time} = \\frac{\\text{Conducting Angle}}{\\omega} \\times 1000$$</p>
-                        <p>Where $\\omega = 2\\pi f$ is the angular frequency.</p>
+                        <div class="formula-scroll"><p>$$\\text{Conducting Time} = \\frac{\\text{Conducting Angle}}{\\omega} \\times 1000$$</p></div>
+                        <div class="formula-scroll"><p>Where $\\omega = 2\\pi f$ is the angular frequency.</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Applied values:</h6>
                         <ul>
-                            <li>Conducting Angle = ${r.parameters.conducting_angle.toFixed(4)} rad</li>
+                            <li>Conducting Angle = ${r.parameters.conducting_angle.toFixed(4)} \\ \\mathrm{rad}$</li>
                             <li>$f = ${p.f}$ Hz</li>
-                            <li>$\\omega = 2\\pi \\times ${p.f} = ${p.w.toFixed(2)}$ rad/s</li>
+                            <li>$\\omega = 2\\pi \\times ${p.f} = ${p.w.toFixed(2)} \\ \\mathrm{rad/s}$</li>
                         </ul>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$\\text{Conducting Time} = \\frac{${r.parameters.conducting_angle.toFixed(4)}}{${p.w.toFixed(2)}} \\times 1000 = ${r.parameters.conducting_time.toFixed(2)}$$ ms</p>
+                        <div class="formula-scroll"><p>$$\\text{Conducting Time} = \\frac{${r.parameters.conducting_angle.toFixed(4)}}{${p.w.toFixed(2)}} \\times 1000 = ${r.parameters.conducting_time.toFixed(2)} \\ \\mathrm{ms}$$</p></div>
                     </div>
                 </div>
             </div>
@@ -161,7 +155,7 @@ export function getFormulaContent(formulaType) {
                     <p>Determined from the initial condition that current is zero at the firing angle α.</p>
                     
                     <div class="mb-3">
-                        <p>Found by solving: $$i(\\alpha) = 0$$</p>
+                        <div class="formula-scroll"><p>Found by solving: $$i(\\alpha) = 0$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -171,13 +165,13 @@ export function getFormulaContent(formulaType) {
                             <li>$R = ${p.R}$ Ω</li>
                             <li>$V_m = ${p.Vm.toFixed(2)}$ V</li>
                             <li>$Z = ${p.Z.toFixed(2)}$ Ω</li>
-                            <li>$\\alpha = ${r.parameters.alpha.toFixed(4)}$ rad</li>
+                            <li>$\\alpha = ${r.parameters.alpha.toFixed(4)} \\ \\mathrm{rad}$</li>
                             <li>$\\theta = ${p.theta.toFixed(4)}$ rad</li>
                         </ul>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The integration constant is essential for solving the differential equation that models the RLE circuit.</p>
+                        <div class="formula-scroll"><p>The integration constant is essential for solving the differential equation that models the RLE circuit.</p></div>
                     </div>
                 </div>
             </div>
@@ -190,17 +184,17 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$I_{avg} = \\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} i(\\omega t) \\, d(\\omega t)$$</p>
-                        <p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p>
+                        <div class="formula-scroll"><p>$$I_{avg} = \\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} i(\\omega t) \\, d(\\omega t)$$</p></div>
+                        <div class="formula-scroll"><p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>This integral is evaluated numerically to get $I_{avg} = ${r.performance.Iavg.toFixed(4)}$ A</p>
+                        <div class="formula-scroll"><p>This integral is evaluated numerically to get $I_{avg} = ${r.performance.Iavg.toFixed(4)} \\ \\mathrm{A}$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The average current is important for determining the DC component of the output.</p>
+                        <div class="formula-scroll"><p>The average current is important for determining the DC component of the output.</p></div>
                     </div>
                 </div>
             </div>
@@ -213,17 +207,17 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$I_{rms} = \\sqrt{\\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} [i(\\omega t)]^2 \\, d(\\omega t)}$$</p>
-                        <p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p>
+                        <div class="formula-scroll"><p>$$I_{rms} = \\sqrt{\\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} [i(\\omega t)]^2 \\, d(\\omega t)}$$</p></div>
+                        <div class="formula-scroll"><p>Where: $$i(\\omega t) = \\frac{V_m}{Z}\\sin(\\omega t - \\theta) - \\frac{V_{dc}}{R} + Ae^{-\\frac{\\omega t}{\\omega\\tau}}$$</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>This integral is evaluated numerically to get $I_{rms} = ${r.performance.Irms.toFixed(4)}$ A</p>
+                        <div class="formula-scroll"><p>This integral is evaluated numerically to get $I_{rms} = ${r.performance.Irms.toFixed(4)} \\ \\mathrm{A}$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The RMS current is used to calculate power dissipation in the resistive components.</p>
+                        <div class="formula-scroll"><p>The RMS current is used to calculate power dissipation in the resistive components.</p></div>
                     </div>
                 </div>
             </div>
@@ -236,7 +230,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$V_{avg} = \\frac{1}{2\\pi} \\left[ \\int_{0}^{\\alpha} V_{dc} \\, d(\\omega t) + \\int_{\\alpha}^{\\beta} V_m \\sin(\\omega t) \\, d(\\omega t) + \\int_{\\beta}^{2\\pi} V_{dc} \\, d(\\omega t) \\right]$$</p>
+                        <div class="formula-scroll"><p>$$V_{avg} = \\frac{1}{2\\pi} \\left[ \\int_{0}^{\\alpha} V_{dc} \\, d(\\omega t) + \\int_{\\alpha}^{\\beta} V_m \\sin(\\omega t) \\, d(\\omega t) + \\int_{\\beta}^{2\\pi} V_{dc} \\, d(\\omega t) \\right]$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -250,7 +244,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>This integral is evaluated numerically to get $V_{avg} = ${r.performance.Vavg.toFixed(4)}$ V</p>
+                        <div class="formula-scroll"><p>This integral is evaluated numerically to get $V_{avg} = ${r.performance.Vavg.toFixed(4)} \\ \\mathrm{V}$</p></div>
                     </div>
                 </div>
             </div>
@@ -263,7 +257,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$V_{rms} = \\sqrt{\\frac{1}{2\\pi} \\left[ \\int_{0}^{\\alpha} V_{dc}^2 \\, d(\\omega t) + \\int_{\\alpha}^{\\beta} [V_m \\sin(\\omega t)]^2 \\, d(\\omega t) + \\int_{\\beta}^{2\\pi} V_{dc}^2 \\, d(\\omega t) \\right]}$$</p>
+                        <div class="formula-scroll"><p>$$V_{rms} = \\sqrt{\\frac{1}{2\\pi} \\left[ \\int_{0}^{\\alpha} V_{dc}^2 \\, d(\\omega t) + \\int_{\\alpha}^{\\beta} [V_m \\sin(\\omega t)]^2 \\, d(\\omega t) + \\int_{\\beta}^{2\\pi} V_{dc}^2 \\, d(\\omega t) \\right]}$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -277,7 +271,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>This integral is evaluated numerically to get $V_{rms} = ${r.performance.Vrms.toFixed(4)}$ V</p>
+                        <div class="formula-scroll"><p>This integral is evaluated numerically to get $V_{rms} = ${r.performance.Vrms.toFixed(4)} \\ \\mathrm{V}$</p></div>
                     </div>
                 </div>
             </div>
@@ -290,22 +284,22 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$P_{load} = V_{dc} \\cdot I_{avg} + I_{rms}^2 \\cdot R$$</p>
+                        <div class="formula-scroll"><p>$$P_{load} = V_{dc} \\cdot I_{avg} + I_{rms}^2 \\cdot R$$</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Applied values:</h6>
                         <ul>
                             <li>$V_{dc} = ${p.Vdc}$ V</li>
-                            <li>$I_{avg} = ${r.performance.Iavg.toFixed(4)}$ A</li>
-                            <li>$I_{rms} = ${r.performance.Irms.toFixed(4)}$ A</li>
+                            <li>$I_{avg} = ${r.performance.Iavg.toFixed(4)} \\ \\mathrm{A}$</li>
+                            <li>$I_{rms} = ${r.performance.Irms.toFixed(4)} \\ \\mathrm{A}$</li>
                             <li>$R = ${p.R}$ Ω</li>
                         </ul>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$P_{load} = ${p.Vdc} \\times ${r.performance.Iavg.toFixed(4)} + ${r.performance.Irms.toFixed(4)}^2 \\times ${p.R} = ${r.performance.power.toFixed(4)}$$ W</p>
+                        <div class="formula-scroll"><p>$$P_{load} = ${p.Vdc} \\times ${r.performance.Iavg.toFixed(4)} + ${r.performance.Irms.toFixed(4)}^2 \\times ${p.R} = ${r.performance.power.toFixed(4)} \\ \\mathrm{W}$$</p></div>
                     </div>
                 </div>
             </div>
@@ -318,27 +312,27 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$PF = \\frac{P_{load}}{V_{s(rms)} \\cdot I_{rms}}$$</p>
-                        <p>Where $V_{s(rms)} = \\frac{V_m}{\\sqrt{2}}$ is the RMS source voltage.</p>
+                        <div class="formula-scroll"><p>$$PF = \\frac{P_{load}}{V_{s(rms)} \\cdot I_{rms}}$$</p></div>
+                        <div class="formula-scroll"><p>Where $V_{s(rms)} = \\frac{V_m}{\\sqrt{2}}$ is the RMS source voltage.</p></div>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Applied values:</h6>
                         <ul>
-                            <li>$P_{load} = ${r.performance.power.toFixed(4)}$ W</li>
+                            <li>$P_{load} = ${r.performance.power.toFixed(4)} \\ \\mathrm{W}$</li>
                             <li>$V_m = ${p.Vm.toFixed(2)}$ V</li>
                             <li>$V_{s(rms)} = \\frac{${p.Vm.toFixed(2)}}{\\sqrt{2}} = ${p.Vrms.toFixed(2)}$ V</li>
-                            <li>$I_{rms} = ${r.performance.Irms.toFixed(4)}$ A</li>
+                            <li>$I_{rms} = ${r.performance.Irms.toFixed(4)} \\ \\mathrm{A}$</li>
                         </ul>
                     </div>
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$PF = \\frac{${r.performance.power.toFixed(4)}}{${p.Vrms.toFixed(2)} \\times ${r.performance.Irms.toFixed(4)}} = ${r.performance.power_factor.toFixed(4)}$$</p>
+                        <div class="formula-scroll"><p>$$PF = \\frac{${r.performance.power.toFixed(4)}}{${p.Vrms.toFixed(2)} \\times ${r.performance.Irms.toFixed(4)}} = ${r.performance.power_factor.toFixed(4)}$$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The power factor indicates how effectively electrical power is being used. A power factor closer to 1 means more efficient use of electrical power.</p>
+                        <div class="formula-scroll"><p>The power factor indicates how effectively electrical power is being used. A power factor closer to 1 means more efficient use of electrical power.</p></div>
                     </div>
                 </div>
             </div>
@@ -351,7 +345,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$FF = \\frac{V_{rms}}{V_{avg}}$$</p>
+                        <div class="formula-scroll"><p>$$FF = \\frac{V_{rms}}{V_{avg}}$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -364,11 +358,11 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$FF = \\frac{${r.performance.Vrms.toFixed(4)}}{${r.performance.Vavg.toFixed(4)}} = ${r.performance.form_factor.toFixed(4)}$$</p>
+                        <div class="formula-scroll"><p>$$FF = \\frac{${r.performance.Vrms.toFixed(4)}}{${r.performance.Vavg.toFixed(4)}} = ${r.performance.form_factor.toFixed(4)}$$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The form factor gives an indication of the shape of the waveform. For a perfect sine wave, FF = 1.11, while for a perfect DC, FF = 1.</p>
+                        <div class="formula-scroll"><p>The form factor gives an indication of the shape of the waveform. For a perfect sine wave, FF = 1.11, while for a perfect DC, FF = 1.</p></div>
                     </div>
                 </div>
             </div>
@@ -381,8 +375,8 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$RF = \\sqrt{\\left(\\frac{V_{rms}}{V_{avg}}\\right)^2 - 1} = \\sqrt{FF^2 - 1}$$</p>
-                        <p>Where FF is the form factor.</p>
+                        <div class="formula-scroll"><p>$$RF = \\sqrt{\\left(\\frac{V_{rms}}{V_{avg}}\\right)^2 - 1} = \\sqrt{FF^2 - 1}$$</p></div>
+                        <div class="formula-scroll"><p>Where FF is the form factor.</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -396,11 +390,11 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$RF = \\sqrt{\\left(\\frac{${r.performance.Vrms.toFixed(4)}}{${r.performance.Vavg.toFixed(4)}}\\right)^2 - 1} = \\sqrt{${r.performance.form_factor.toFixed(4)}^2 - 1} = ${r.performance.ripple_factor.toFixed(4)}$$</p>
+                        <div class="formula-scroll"><p>$$RF = \\sqrt{\\left(\\frac{${r.performance.Vrms.toFixed(4)}}{${r.performance.Vavg.toFixed(4)}}\\right)^2 - 1} = \\sqrt{${r.performance.form_factor.toFixed(4)}^2 - 1} = ${r.performance.ripple_factor.toFixed(4)}$$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>The ripple factor indicates the amount of AC content in the DC output. A lower ripple factor means a smoother DC output.</p>
+                        <div class="formula-scroll"><p>The ripple factor indicates the amount of AC content in the DC output. A lower ripple factor means a smoother DC output.</p></div>
                     </div>
                 </div>
             </div>
@@ -413,7 +407,7 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Formula:</h6>
-                        <p>$$\\eta = \\frac{P_{dc}}{P_{rms}} = \\frac{V_{avg} \\cdot I_{avg}}{V_{rms} \\cdot I_{rms}} \\times 100\\%$$</p>
+                        <div class="formula-scroll"><p>$$\\eta = \\frac{P_{dc}}{P_{rms}} = \\frac{V_{avg} \\cdot I_{avg}}{V_{rms} \\cdot I_{rms}} \\times 100\\%$$</p></div>
                     </div>
                     
                     <div class="mb-3">
@@ -428,11 +422,11 @@ export function getFormulaContent(formulaType) {
                     
                     <div class="mb-3">
                         <h6>Calculation:</h6>
-                        <p>$$\\eta = \\frac{${r.performance.Vavg.toFixed(4)} \\times ${r.performance.Iavg.toFixed(4)}}{${r.performance.Vrms.toFixed(4)} \\times ${r.performance.Irms.toFixed(4)}} \\times 100\\% = ${(r.performance.efficiency * 100).toFixed(2)}\\%$$</p>
+                        <div class="formula-scroll"><p>$$\\eta = \\frac{${r.performance.Vavg.toFixed(4)} \\times ${r.performance.Iavg.toFixed(4)}}{${r.performance.Vrms.toFixed(4)} \\times ${r.performance.Irms.toFixed(4)}} \\times 100\\% = ${(r.performance.efficiency * 100).toFixed(2)}\\%$$</p></div>
                     </div>
                     
                     <div class="alert alert-info">
-                        <p>Efficiency indicates how effectively the rectifier converts AC power to usable DC power.</p>
+                        <div class="formula-scroll"><p>Efficiency indicates how effectively the rectifier converts AC power to usable DC power.</p></div>
                     </div>
                 </div>
             </div>
@@ -453,7 +447,7 @@ export function getFormulaContent(formulaType) {
                                 <li><strong>Continuous Conduction:</strong> If $ \\beta > \\pi $</li>`
                             }
                         </ul>
-                        <p>Current Status: <strong>${
+                        <div class="formula-scroll"><p>Current Status: <strong>${
                             document.getElementById('controlled').checked ? 
                                 (r.parameters.beta > (Math.PI + r.parameters.alpha) ? 
                                     'Continuous ($ \\beta > \\pi + \\alpha $)' : 
@@ -461,7 +455,7 @@ export function getFormulaContent(formulaType) {
                                 (r.parameters.beta > Math.PI ? 
                                     'Continuous ($ \\beta > \\pi $)' : 
                                     'Discontinuous ($ \\beta < \\pi $)')
-                        }</strong></p>
+                        }</strong></p></div>
                     </div>
 
                     ${
@@ -521,9 +515,9 @@ export function getFormulaContent(formulaType) {
                     }
 
                     <div class="alert alert-info">
-                        <p>The continuity of the current significantly affects the calculation of performance metrics like average and RMS values.</p>
+                        <div class="formula-scroll"><p>The continuity of the current significantly affects the calculation of performance metrics like average and RMS values.</p></div>
                         ${document.getElementById('controlled').checked ? 
-                            '<p>In controlled rectifiers, adjusting the firing angle allows control of the average output voltage and current.</p>' : 
+                            '<div class="formula-scroll"><p>In controlled rectifiers, adjusting the firing angle allows control of the average output voltage and current.</p></div>' : 
                             ''}
                     </div>
                 </div>
