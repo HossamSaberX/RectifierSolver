@@ -20,7 +20,7 @@ A web application for analyzing and solving power electronics rectifier circuits
 - Uncontrolled RLE Full Wave
 - Controlled RLE Full Wave
 
-## Installation
+## Installation for local dev
 
 ```bash
 git clone https://github.com/HossamSaberX/RectifierSolver.git
@@ -53,4 +53,4 @@ Contributions are welcomed! The project needs:
 
 ## Contact
 
-For questions, support or bugs, please open an issue in the GitHub repository.
+For questions, support or bugs, please open an issue.

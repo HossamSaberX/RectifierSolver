@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free online tool for analyzing and solving rectifier circuits. Calculate parameters, performance metrics, and visualize waveforms for various circuit configurations.">
+    
+    <!-- Enhanced SEO Meta Tags -->
+    <title>Rectifier Circuit Solver & Analyzer | Power Electronics Tool</title>
+    <meta name="description" content="Analyze single & full-wave rectifier circuits (RLE, FWD) with our free online solver. Visualize waveforms & calculate power factor, ripple, efficiency.">
+    <meta name="keywords" content="rectifier analysis, power electronics calculator, half wave rectifier, full wave rectifier, RLE circuit, freewheeling diode, power factor calculation, ripple factor, circuit solver, electrical engineering">
+    <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="KxKTExjLlST2MJv7DFYXx6H1fpzr5cK5zyBOjC28C5o" />
-    <title>Rectifier Circuit Solver</title>
+    
+    <!-- Open Graph Tags for Social Media -->
+    <meta property="og:title" content="Rectifier Circuit Solver & Analyzer | Power Electronics Tool">
+    <meta property="og:description" content="Analyze single & full-wave rectifier circuits (RLE, FWD) with our free online solver. Visualize waveforms & calculate power factor, ripple, efficiency.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rectifiersolver.onrender.com/">
+    <meta property="og:image" content="https://rectifiersolver.onrender.com/static/images/UncontrolledRLE.png">
+    <meta property="og:site_name" content="Rectifier Circuit Solver">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rectifier Circuit Solver & Analyzer | Power Electronics Tool">
+    <meta name="twitter:description" content="Analyze single & full-wave rectifier circuits (RLE, FWD) with our free online solver. Visualize waveforms & calculate power factor, ripple, efficiency.">
+    <meta name="twitter:image" content="https://rectifiersolver.onrender.com/static/images/UncontrolledRLE.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://rectifiersolver.onrender.com/">
+    
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdn.plot.ly" crossorigin>
@@ -15,24 +44,33 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Enhanced JSON-LD Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "Rectifier Circuit Solver",
-      "description": "Online tool for analyzing and solving rectifier circuits",
+      "name": "Rectifier Circuit Solver & Analyzer",
+      "description": "Free online tool for analyzing and solving rectifier circuits including half-wave, full-wave, RLE, and freewheeling diode configurations. Calculate power factor, ripple factor, efficiency, and visualize waveforms.",
+      "url": "https://rectifiersolver.onrender.com/",
       "applicationCategory": "Engineering",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
+      "applicationSubCategory": "Power Electronics",
+      "keywords": ["rectifier analysis", "power electronics", "circuit solver", "electrical engineering", "half wave rectifier", "full wave rectifier"],
       "operatingSystem": "Any",
-      "author": {
-        "@type": "Person",
-        "name": "HossamSaber",
-        "url": "https://github.com/HossamSaberX"
-      }
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": "en-US",
+      "isAccessibleForFree": true,
+      "featureList": [
+        "Half-wave rectifier analysis",
+        "Full-wave rectifier analysis", 
+        "RLE circuit configuration",
+        "Freewheeling diode configuration",
+        "Controlled and uncontrolled rectifiers",
+        "Waveform visualization",
+        "Power factor calculation",
+        "Ripple factor calculation",
+        "Efficiency analysis"
+      ]
     }
     </script>
 </head>
@@ -354,7 +392,6 @@
         </div>
     </div>
     
-    <!-- Added GitHub repository link in the footer -->
     <footer class="container text-center mt-4 mb-4">
         <hr>
         <a href="https://github.com/HossamSaberX/RectifierSolver" target="_blank" class="btn btn-outline-dark btn-sm">

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from app.solvers import UncontrolledHalfWaveSolver, ControlledHalfWaveSolver, FreewheelingHalfWaveSolver, UncontrolledFullWaveSolver, ControlledFullWaveSolver
 
 # Initialize Flask app with the correct template folder
@@ -15,6 +15,14 @@ def add_header(response):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory(app.static_folder, 'robots.txt', mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    return send_from_directory(app.static_folder, 'sitemap.xml', mimetype='application/xml')
 
 @app.route('/solve', methods=['POST'])
 def solve():

@@ -3,6 +3,7 @@ venv/
 env/
 ENV/
 .venv/
+diff.sh
 
 # Python cache files
 __pycache__/

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://rectifiersolver.onrender.com/sitemap.xml
+
+Allow: /static/
