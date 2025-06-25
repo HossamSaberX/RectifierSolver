@@ -130,8 +130,8 @@ def process_query(user_query: str) -> Dict:
     f = float(params["source_frequency_hz"])
     R = float(params["R_load"])
     L = float(params["L_load"])
-    Vdc = float(params.get("E_load", 0))
-    firing_angle = float(params.get("firing_angle_alpha", 0))
+    Vdc = float(params.get("E_load") or 0)
+    firing_angle = float(params.get("firing_angle_alpha") or 0)
 
     solver = create_solver(
         wave_type=wave_type,
