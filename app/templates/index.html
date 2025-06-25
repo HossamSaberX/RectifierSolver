@@ -78,6 +78,15 @@
     <div class="container mt-4">
         <h1 class="text-center mb-4">Rectifier Solver</h1>
         
+        <div class="card mb-4 nlp-section">
+            <div class="card-body">
+                <h2 class="h4">Solve with AI</h2>
+                <p>Describe your single-phase rectifier circuit below.</p>
+                <textarea id="nlp-input" class="form-control mb-2" rows="4" placeholder="e.g., A single-phase half-wave controlled rectifier with a firing angle of 45 degrees is connected to a 230V, 50Hz source. It supplies an RLE load with R=10Ω, L=20mH, and E=50V."></textarea>
+                <button id="solve-with-nlp-btn" class="btn btn-success w-100">Solve with AI</button>
+            </div>
+        </div>
+        
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
@@ -403,6 +412,6 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js" defer></script>
-    <script type="module" src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
