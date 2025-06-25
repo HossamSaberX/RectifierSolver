@@ -5,8 +5,6 @@ from typing import Dict
 
 import google.generativeai as genai
 from dotenv import load_dotenv
-from flask import jsonify
-
 from .solver_factory import create_solver
 
 # ---------------------------------------------------------------------------

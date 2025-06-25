@@ -1,8 +1,4 @@
-import { displayResults } from './results-display.js';
 
-/**
- * Attach handlers that integrate the NLP endpoint with the existing form & UI.
- */
 export function setupNLPHandlers() {
     const nlpButton = document.getElementById('solve-with-nlp-btn');
     if (!nlpButton) {
@@ -39,16 +35,13 @@ export function setupNLPHandlers() {
                 return response.json();
             })
             .then((data) => {
-                if (data.supported) {
-                    updateFormWithAIParams(data.extracted_params);
-                    displayResults(data.results);
-
-                    const resultsSection = document.getElementById('results');
-                    resultsSection.classList.remove('d-none');
-                    resultsSection.scrollIntoView({ behavior: 'smooth' });
-                } else {
+                if (!data.supported) {
                     alert(`Circuit not supported: ${data.reason}`);
+                    return;
                 }
+                updateFormWithAIParams(data.extracted_params);
+                const form = document.getElementById('circuit-form');
+                form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
             })
             .catch((error) => {
                 console.error('Error during fetch operation:', error);
