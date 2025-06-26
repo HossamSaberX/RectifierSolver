@@ -1,7 +1,6 @@
 flask
 numpy==1.26.4
 scipy==1.13.0
-Flask-WTF==1.2.1
 gunicorn==22.0.0
 google-generativeai
 python-dotenv
