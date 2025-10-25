@@ -17,6 +17,8 @@ try:
 except KeyError as exc:
     raise EnvironmentError("GEMINI_API_KEY environment variable not set.") from exc
 
+MODEL_NAME = os.environ.get("GEMINI_MODEL_NAME", "gemini-flash-latest")
+
 # ---------------------------------------------------------------------------
 # Prompt template
 # ---------------------------------------------------------------------------
@@ -75,7 +77,7 @@ def process_query(user_query: str) -> Dict:
     # ---------------------------------------------------------------------
     # 1. Let Gemini extract & normalise the circuit description
     # ---------------------------------------------------------------------
-    model = genai.GenerativeModel("gemini-1.5-flash-latest")
+    model = genai.GenerativeModel(MODEL_NAME)
     response = model.generate_content([SYSTEM_PROMPT, user_query])
 
     cleaned_text = response.text.strip().replace("```json", "").replace("```", "")
